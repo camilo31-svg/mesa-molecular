@@ -11937,7 +11937,7 @@ const GitHubSync=(()=>{
         const remote=await read();if(sha&&!remote.workspace)throw Error('El archivo remoto fue eliminado; tu borrador local se conserva.');
         const snapshot=structuredClone(db),result=GitHubMerge.combine(base,snapshot,remote.workspace||Sync.apply(null,{}));
         if(result.conflicts.length){conflictState(result,remote);throw Error('Resuelve el conflicto; tu borrador se conserva en este dispositivo.');}
-        if(!Sync.count(Sync.diff(remote.workspace,result.workspace))){await rememberBase(result.workspace,remote.sha);issue='';return;}
+        if(!Sync.count(Sync.diff(remote.workspace,result.workspace))){await rememberBase(result.workspace,remote.sha);const next=Sync.apply(result.workspace,Sync.diff(snapshot,db));if(Sync.count(Sync.diff(db,next)))apply(next);issue='';return;}
         const text=JSON.stringify(result.workspace);if(new TextEncoder().encode(text).length>90000000)throw Error('El espacio supera 90 MB; usa el servidor compartido para archivos grandes.');
         const response=await api(repoPath()+'/contents/'+path,{method:'PUT',body:{message:'Actualizar espacio Mesa Molecular',branch:config.branch,content:encode(text),...(remote.sha?{sha:remote.sha}:{})}});
         const subsequent=Sync.diff(snapshot,db),next=Sync.apply(result.workspace,subsequent);await rememberBase(result.workspace,response.content.sha);lastWrite=Date.now();issue='';if(Sync.count(Sync.diff(db,next)))apply(next);else Workspace.save();
