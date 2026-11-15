@@ -1,6 +1,6 @@
 # Mesa Molecular
 
-Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.6.
+Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.7.
 
 [Abrir aplicación](https://camilo31-svg.github.io/mesa-molecular/)
 
@@ -8,7 +8,17 @@ Aplicación independiente de edición molecular, cuaderno de laboratorio y model
 
 Inserta tablas con el selector de filas/columnas y edita sus celdas dentro de la entrada. Admite fórmulas, referencias absolutas, pegado de hojas de cálculo, estadísticas y CSV. El botón de dictado usa el servicio del navegador cuando está disponible.
 
-En Configuración → Apariencia puedes elegir Automático, Móvil u Ordenador. En móvil vertical alternas secuencia y mapa, con una secuencia desplegable debajo del mapa; al girar se muestran ambas vistas. Admite pellizco para ampliar y pulsación prolongada para seleccionar/anotar.
+En Configuración → Apariencia puedes elegir Automático, Móvil u Ordenador. En móvil vertical alternas secuencia y mapa, con una secuencia desplegable debajo del mapa; al girar se muestran ambas vistas. Admite pellizco para ampliar y giro con dos dedos en el mapa circular. Tocar una base la selecciona; mantener pulsado conserva la selección y abre su menú. Puedes extenderla arrastrando sus extremos o manteniendo pulsado y arrastrando. Un deslizamiento rápido desplaza la secuencia.
+
+Al cambiar de orientación se limpian los gestos pendientes y se recalculan las filas. Reducir el zoom al mínimo restablece la vista. Run digest cierra el inspector en móvil. El gel se ajusta al espacio disponible al abrir/cerrar la secuencia; sus opciones y carriles tienen controles desplegables. Más se limita al área sobre la navegación inferior y permite desplazarse por todas sus opciones.
+
+## Codones, copiado y CRISPR
+
+Pulsar un aminoácido selecciona sus tres bases, también en la hebra inversa, traducciones unidas y cruces del origen. Copiar abre las seis variantes de ADN, ARN y traducción, en ambas orientaciones. La opción de copia parcial ajusta el marco del CDS y no conserva la identidad de una TU incompleta.
+
+El diseño de gRNAs permite elegir PAM, lado, longitud, región, composición y modelo. Incluye Doench 2014 y Azimuth/Doench-Fusi 2016, exportación TSV, selección y guardado como oligo. Se verificaron 77 candidatos NGG de un ejemplo de Benchling (guía/PAM/hebra/corte/puntuación 2014), y los 1.000 ejemplos oficiales de Azimuth. Azimuth no puntúa secuencias circulares; los otros PAM sin un modelo compatible muestran actividad no disponible. El organismo/ensamblaje se registra como referencia declarada: no se incluyen índices de genoma completo. Los off-targets disponibles son locales, no equivalen al cálculo genómico de Benchling. No se han implementado CFD ni diseño pareado/base-editing.
+
+Los pesos de Azimuth proceden de Microsoft Research, revisión 84eb013b8dde7132357a9b69206e99a4c65e2b89, con licencia BSD de tres cláusulas incluida en index.html. La reproducción de todos los modelos y servicios genómicos de Benchling sigue pendiente.
 
 ## Cuenta y guardado privado
 
