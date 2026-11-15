@@ -3432,14 +3432,16 @@ const Sync = (() => {
   const collections = ['projects', 'folders', 'schemas', 'docs', 'assets', 'trash', 'places', 'containers', 'movements',
     'batches', 'savedSearches', 'libraries', 'enzymeLists', 'gelLadders', 'circuits','grammars'];
 
+  function structuralEqual(a,b){
+    if(a===b)return true;
+    if(a===null||b===null||typeof a!=='object'||typeof b!=='object')return false;
+    if(Array.isArray(a)||Array.isArray(b))return Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((value,i)=>structuralEqual(value,b[i]));
+    const keys=Object.keys(a);return keys.length===Object.keys(b).length&&keys.every(key=>Object.prototype.hasOwnProperty.call(b,key)&&structuralEqual(a[key],b[key]));
+  }
   function equal(a, b, collection) {
     if (a === b) return true;
     if (!a || !b) return false;
-    if (collection === 'assets') {
-      const keys = Object.keys(a);
-      return keys.length === Object.keys(b).length && keys.every(key => a[key] === b[key]);
-    }
-    return JSON.stringify(a) === JSON.stringify(b);
+    return structuralEqual(a,b);
   }
 
   function diff(before, after) {
@@ -3477,7 +3479,7 @@ const Sync = (() => {
     return Object.values(changes).reduce((total, rows) => total + rows.length, 0);
   }
 
-  return { collections, diff, apply, count };
+  return { collections, diff, apply, count, equal };
 })();
 if (typeof module !== 'undefined') module.exports = Sync;
 
@@ -4148,7 +4150,7 @@ const Workspace = (() => {
     if (Team.enabled) return Team.status();
     if (conflict) return 'Conflicto entre pestañas';
     if (storageIssue) return 'Cambios sin guardar';
-    return pending ? 'Guardando…' : typeof CloudSync!=='undefined'&&CloudSync.label()?CloudSync.status():typeof GitHubSync!=='undefined'&&GitHubSync.connected()?GitHubSync.status():'Espacio local';
+    return pending ? 'Guardando…' : typeof CloudSync!=='undefined'&&CloudSync.active()?CloudSync.status():typeof GitHubSync!=='undefined'&&GitHubSync.connected()?GitHubSync.status():'Espacio local';
   }
 
   async function flush(){if(Team.enabled){await Team.flush();return;}save();while(pending||queued)await new Promise(resolve=>setTimeout(resolve,10));if(storageIssue||conflict)throw Error('No se pudo confirmar el guardado local. Conserva una copia de seguridad.');}
@@ -11956,7 +11958,7 @@ const dictationActions={'note-dictation':()=>NotebookDictation.open()};
 const GitHubMerge={
   combine(base,local,remote){
     const localChanges=Sync.diff(base,local),remoteChanges=Sync.diff(base,remote),conflicts=[];
-    for(const [collection,rows]of Object.entries(localChanges)){const changed=new Map(remoteChanges[collection]||[]);for(const[id,value]of rows)if(changed.has(id)&&JSON.stringify(value)!==JSON.stringify(changed.get(id)))conflicts.push({collection,id,name:value?.name||changed.get(id)?.name||id});}
+    for(const [collection,rows]of Object.entries(localChanges)){const changed=new Map(remoteChanges[collection]||[]);for(const[id,value]of rows)if(changed.has(id)&&!Sync.equal(value,changed.get(id),collection))conflicts.push({collection,id,name:value?.name||changed.get(id)?.name||id});}
     return{workspace:Sync.apply(remote,localChanges),conflicts};
   }
 };
@@ -12049,7 +12051,7 @@ const CloudSync=(()=>{
     if(client){subscription?.unsubscribe();client.auth.stopAutoRefresh();}
     clientRemember=remember;
     client=supabase.createClient(config.url,config.key,{auth:{persistSession:remember,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'mesa-cloud-auth'}});
-    subscription=client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){ready=false;user=null;clearTimeout(timer);clearInterval(poll);renderRail();renderStatus();}if(event==='PASSWORD_RECOVERY'&&session)setTimeout(passwordScreen,0);}).data.subscription;
+    subscription=client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){if(user)issue='Sesión cerrada · vuelve a iniciar sesión';ready=false;user=null;clearTimeout(timer);clearInterval(poll);renderRail();renderStatus();}if(event==='PASSWORD_RECOVERY'&&session)setTimeout(passwordScreen,0);}).data.subscription;
     return client;
   }
   async function read(){const result=await client.from('mesa_workspaces').select('revision,payload,updated_at').eq('owner_id',user.id).maybeSingle();if(result.error)throw fail(result.error);if(result.data){validateBackup(result.data.payload);if(!Number.isSafeInteger(Number(result.data.revision)))throw Error('Revisión remota no válida.');}return result.data;}
@@ -12106,7 +12108,7 @@ const CloudSync=(()=>{
   function resolve(){if(!conflict)return;show('Resolver conflicto','<p>Tu borrador local se conserva. Descárgalo antes de abrir los archivos de la cuenta.</p><ul>'+conflict.items.map(i=>'<li>'+esc(i.name)+'</li>').join('')+'</ul>'+btn('Descargar borrador','backup')+'<label class="check-row"><input type="checkbox" required> Conservar un respaldo y abrir la versión de mi cuenta.</label>',async()=>{await cache.put('backup:'+key(),{workspace:structuredClone(db),at:Date.now()});const r=conflict.remote;await remember(r.payload,r.revision);conflict=null;issue='';apply(r.payload);},'Abrir versión de la cuenta','Conflicto');}
   async function logout(){await Workspace.flush();if(ready)await flush();const previous=await cache.get('before:'+key());await cache.put('backup:'+key(),{workspace:structuredClone(db),at:Date.now()});const r=await client.auth.signOut({scope:'local'});if(r.error)throw fail(r.error);ready=false;user=null;base=null;revision=0;conflict=null;issue='';clearTimeout(timer);clearInterval(poll);try{localStorage.removeItem(ownerKey);localStorage.removeItem('mesa-account-remember');}catch{}if(previous?.workspace)apply(previous.workspace);else apply(example());client=null;dialog.close();render();}
   addEventListener('online',()=>{if(ready)flush().catch(()=>{});});addEventListener('focus',()=>pull().catch(()=>{}));document.addEventListener('visibilitychange',()=>{if(ready){if(document.hidden)flush().catch(()=>{});else pull().catch(()=>{});}});
-  return{available,connected,label,status,start,open,flush,schedule,backup,resolve,logout,initialize:initialScreen};
+  return{available,connected,label,status,start,open,flush,schedule,backup,resolve,logout,initialize:initialScreen,active:()=>Boolean(user||issue)};
 })();
 const cloudActions={'cloud-login':()=>CloudSync.open(),'cloud-signup':()=>CloudSync.open('signup'),'cloud-reset':()=>CloudSync.open('reset'),'cloud-initialize':()=>CloudSync.initialize(),'cloud-save':async()=>{await Workspace.flush();await CloudSync.flush();toast('Guardado en tu cuenta.');},'cloud-backup':()=>CloudSync.backup(),'cloud-conflict':()=>CloudSync.resolve(),'cloud-logout':()=>CloudSync.logout()};
 
