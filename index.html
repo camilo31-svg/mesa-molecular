@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="mesa-version" content="6.9">
+  <meta name="mesa-version" content="6.10">
   <meta name="description" content="Cuaderno local y editor de secuencias para tu laboratorio.">
   <meta name="mesa-cloud-url" content="https://ymwftzisbbwzmkfpvewm.supabase.co"><meta name="mesa-cloud-key" content="sb_publishable_jjtD1azTqELVLxnqUGhdDw_H9kd9dsB"><meta name="mesa-github-owner" content="camilo31-svg"><meta name="mesa-github-repo" content="mesa-molecular-datos"><title>Mesa Molecular</title>
   <style>
@@ -1115,6 +1115,66 @@ html[data-theme="dark"] :is(.annotation-name,.annotation-expand,.annotation-row-
 .part-source-picks { padding: 8px; background: var(--soft); }
 .part-occurrences table { min-width: 760px; font-size: 11px; }
 .circuit-design-tools { flex-wrap: wrap; }
+#circuit-stage { position:relative; margin:0 auto; }
+#circuit-drawing { position:absolute; top:0; left:0; transform-origin:0 0; }
+.circuit-palette summary,.circuit-inspector summary { cursor:pointer; font-weight:600; padding:5px 0 10px; }
+.circuit-canvas { position:relative; min-width:0; overscroll-behavior:contain; }
+.circuit-canvas,.circuit-canvas * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+.circuit-arrange { display:none; }
+.circuit-mobile-more { display:none; }
+.circuit-viewport-tools { display:flex; align-items:center; gap:3px; }
+#circuit-scale-label { min-width:38px; font-size:11px; color:var(--muted); }
+html[data-layout="mobile"] #shell.expanded-workspace #workspace-top { display:flex; }
+html[data-layout="mobile"] #shell.expanded-workspace #tabstrip { display:flex; }
+html[data-layout="mobile"] .circuit-workspace { min-width:0; width:100%; display:flex; flex-direction:column; overflow:hidden; padding:8px; }
+html[data-layout="mobile"] .circuit-heading { display:block; flex-shrink:0; margin-bottom:6px; min-width:0; }
+html[data-layout="mobile"] .circuit-heading .eyebrow { display:none; }
+html[data-layout="mobile"] .circuit-heading h1 { font-size:19px; margin:0 0 3px; overflow-wrap:anywhere; }
+html[data-layout="mobile"] .circuit-heading p { font-size:11px; margin:0 0 4px; }
+html[data-layout="mobile"] .circuit-heading>.toolbar { flex-wrap:nowrap; overflow-x:auto; gap:5px; padding:3px 0; }
+html[data-layout="mobile"] .circuit-heading>.toolbar button { flex-shrink:0; font-size:11px; }
+html[data-layout="mobile"] .circuit-projects { flex-shrink:0; max-height:62px; padding-bottom:5px; }
+html[data-layout="mobile"] .circuit-projects button { min-width:120px; padding:5px 8px; font-size:11px; }
+html[data-layout="mobile"] .circuit-projects small { font-size:10px; }
+html[data-layout="mobile"] .circuit-tabs { flex-shrink:0; margin:0 0 6px; }
+html[data-layout="mobile"] .circuit-tabs button { padding:7px 10px; }
+html[data-layout="mobile"] .circuit-section { flex:1; min-height:0; min-width:0; overflow:auto; overscroll-behavior:contain; }
+html[data-layout="mobile"] .circuit-design-tools { flex-wrap:nowrap; overflow-x:auto; margin-bottom:6px; padding-bottom:3px; }
+html[data-layout="mobile"] .circuit-design-tools>* { flex-shrink:0; }
+html[data-layout="mobile"] .circuit-design-tools { gap:5px; justify-content:space-between; overflow-x:visible; }
+html[data-layout="mobile"] .circuit-design-tools button { padding:5px 7px; }
+html[data-layout="mobile"] .circuit-desktop-tools { display:none; }
+html[data-layout="mobile"] .circuit-mobile-more { display:block; }
+html[data-layout="mobile"] .circuit-design-tools button { font-size:11px; min-height:32px; }
+html[data-layout="mobile"] .circuit-design-tools .toolbar-gap,html[data-layout="mobile"] .circuit-zoom-label { display:none; }
+html[data-layout="mobile"] .circuit-arrange { display:block; }
+html[data-layout="mobile"] .circuit-design-grid { min-height:0; display:flex; flex-direction:column; border-radius:6px; }
+html[data-layout="mobile"] .circuit-canvas { order:0; flex-shrink:0; width:100%; height:clamp(200px,calc(var(--app-viewport-height,100dvh) - 300px),560px); min-height:0; max-height:none; touch-action:none; }
+html[data-layout="mobile"] .circuit-palette { order:1; border:0; border-top:1px solid var(--line); padding:8px; }
+html[data-layout="mobile"] .circuit-palette-items { display:grid; grid-template-columns:repeat(auto-fit,minmax(76px,1fr)); gap:4px; }
+html[data-layout="mobile"] .circuit-palette button { min-width:0; justify-content:center; padding:6px 3px; }
+html[data-layout="mobile"] .circuit-inspector { order:2; display:block; grid-column:auto; border-left:0; border-top:1px solid var(--line); padding:8px; }
+html[data-layout="mobile"] .circuit-inspector dl { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:5px; }
+html[data-layout="mobile"] .circuit-inspector button { max-width:100%; white-space:normal; }
+html[data-layout="mobile"] .circuit-card { padding:12px; max-width:100%; }
+html[data-layout="mobile"] .circuit-card>.section-heading { display:block; }
+html[data-layout="mobile"] .circuit-card .toolbar { flex-wrap:wrap; }
+html[data-layout="mobile"] .circuit-two-columns,html[data-layout="mobile"] .circuit-export-grid { grid-template-columns:minmax(0,1fr); gap:8px; }
+html[data-layout="mobile"] .circuit-card textarea { font-size:16px; }
+html[data-layout="mobile"] .circuit-touch-hint { margin:6px 2px; font-size:10px; }
+html[data-layout="mobile"] .circuit-start { min-height:0; padding:10px; }
+html[data-layout="mobile"] .circuit-start h2 { font-size:21px; }
+html[data-layout="mobile"] .circuit-workspace:has(.circuit-start) { overflow:auto; }
+html[data-layout="mobile"][data-orientation="landscape"] .circuit-heading { display:flex; align-items:center; gap:10px; margin-bottom:3px; }
+html[data-layout="mobile"][data-orientation="landscape"] .circuit-heading>div:first-child { flex:0 1 40%; min-width:0; }
+html[data-layout="mobile"][data-orientation="landscape"] .circuit-heading h1 { font-size:16px; margin:0; }
+html[data-layout="mobile"][data-orientation="landscape"] .circuit-heading p { display:none; }
+html[data-layout="mobile"][data-orientation="landscape"] .circuit-heading>.toolbar { flex:1; min-width:0; }
+html[data-layout="mobile"][data-orientation="landscape"] .circuit-projects { max-height:36px; padding-bottom:2px; }
+html[data-layout="mobile"][data-orientation="landscape"] .circuit-projects small { display:none; }
+html[data-layout="mobile"] #alignment-comparisons { max-height:170px; }
+html[data-layout="mobile"] #alignment-comparisons label { display:flex; gap:8px; align-items:center; min-height:38px; }
+html[data-layout="mobile"] #alignment-input-summary { font-size:12px; padding:8px; }
 @media (max-width: 800px) { .annotation-inspector { flex-basis: min(240px,42%); } .annotation-controls .toolbar { gap: 3px; } }
 @media print {
   html[data-theme="dark"] { color-scheme: light; --surface: white; --surface-alt: white; --surface-raised: white; --canvas: white; --ink: #202638; --muted: #616b7f; --line: #d6dbe5; --line-strong: #a0aabc; --map-text: #252525; --selection-handle: #1b1b1d; --soft: #f5f6fa; --tint: #eef0fe; --blue: #3d5ddc; --blue-dark: #1015ac; --nt-a: #8a7a08; --nt-c: #2869b3; --nt-g: #ba6529; --nt-t: #29876b; }
@@ -3998,11 +4058,12 @@ function render() {
 }
 
 function renderEditor() {
+  if(typeof CircuitViewport!=='undefined')CircuitViewport.release();
   const doc = active();
   const node = byId('editor');
   const panel = { home: calendarPanel, projects: expandedBrowser, search: expandedBrowser,
     inventory: inventoryPanel, models: modelPanel, circuits: circuitDashboard, assets: assetPanel, trash: trashPanel }[ui.dashboard];
-  if (panel) node.innerHTML = panel();
+  if (panel) { node.innerHTML = panel(); if(ui.dashboard==='circuits')CircuitViewport.bind(currentCircuit()); }
   else if (!doc) node.innerHTML = welcome();
   else if (doc.kind === 'sequence') {
     node.innerHTML = sequenceWorkspace(doc);
@@ -5855,7 +5916,7 @@ const advancedActions = {
   'import-trace': importTrace,
   'trace-open': id => showTrace(assetOf(id)),
   'trace-page': direction => { tracePreview.page += Number(direction); drawTrace(); },
-  'tool-pane': pane => { if (['features', 'translations'].includes(pane)) { openAnnotations(pane); return; } ui.pane = pane; ui.split = true;if(DeviceLayout.mobile())ui.mobileView='map'; renderEditor(); },
+  'tool-pane': pane => { if(active()?.kind!=='sequence')return;if(ui.dashboard)openDoc(active().id);if (['features', 'translations'].includes(pane)) { openAnnotations(pane); return; } ui.pane = pane; ui.split = true;if(DeviceLayout.mobile())ui.mobileView='map'; renderEditor(); },
   motif: localMotifDialog,
   'motif-open': value => {
     const [id, position] = value.split('|');
@@ -6024,7 +6085,7 @@ const createGroups = [
     ['Assemble DNA / RNA sequences by concatenation', 'assembly', 'concat'],
   ], '', 'sequence'],
   ['AA sequence', [
-    ['New AA sequence', 'new-sequence', 'AA'], ['New AA alignment', 'align-multiple'],
+    ['New AA sequence', 'new-sequence', 'AA'], ['New AA alignment', 'align-multiple', 'AA'],
     ['Import AA sequences', 'import'], ['Import AA sequences from spreadsheet', 'spreadsheet-import', 'AA'],
     ['Assemble AA sequences by concatenation', 'assembly', 'AA'],
   ], '', 'alignment'],
@@ -10985,10 +11046,10 @@ function circuitGlyph(role, color = '#2865a6') {
   return shapes[role] || shapes.cds;
 }
 
-function circuitNetworkSVG(circuit, interactive = true) {
+function circuitNetworkSVG(circuit, interactive = true, compact = false) {
   const state = interactive ? circuitSession(circuit) : {};
-  const width = Math.max(900, ...circuit.nodes.map(item => item.x + 230));
-  const height = Math.max(430, ...circuit.nodes.map(item => item.y + 125));
+  const width = Math.max(compact?260:900, ...circuit.nodes.map(item => item.x + (compact?210:230)));
+  const height = Math.max(compact?170:430, ...circuit.nodes.map(item => item.y + (compact?110:125)));
   const edges = circuit.edges.map(edge => {
     const from = circuit.nodes.find(item => item.id === edge.source);
     const to = circuit.nodes.find(item => item.id === edge.target);
@@ -11023,14 +11084,14 @@ function circuitNetworkSVG(circuit, interactive = true) {
     '" class="circuit-network" role="group" aria-label="Red de regulación" font-family="Arial,sans-serif"><rect width="100%" height="100%" fill="#f7f9fc"/>' + edges + nodes + '</svg>';
 }
 
-function circuitPartsSVG(circuit, interactive = true) {
-  const columns = 7;
+function circuitPartsSVG(circuit, interactive = true, layoutWidth = 0) {
+  const columns = layoutWidth?Math.max(1,Math.min(7,Math.floor((layoutWidth-20)/120))):7;
   const stride=circuit.parts.some(p=>p.annotations?.some(f=>f.biopart?.role==='tu'))?150:105;
-  const width = 950;
+  const width = layoutWidth?20+columns*120:950;
   const height = Math.max(150, 75 + Math.ceil(circuit.parts.length / columns) * stride);
   const content = circuit.parts.map((part, i) => {
     const row = Math.floor(i / columns);
-    const x = 80 + i % columns * 130;
+    const x = (layoutWidth?70:80) + i % columns * (layoutWidth?120:130);
     const y = 75 + row * stride;
     const children=(part.annotations||[]).flatMap((f,index)=>f.biopart?.role==='tu'?[{f,index}]:[]);
     return '<g' + (interactive ? ' data-action="circuit-part" data-value="' + part.id + '" role="button" tabindex="0" class="circuit-part" aria-label="Parte ' + esc(part.name) + '"' : '') +
@@ -11049,7 +11110,7 @@ function circuitPartsSVG(circuit, interactive = true) {
 
 function circuitChart(points, nodes, { xKey = 'time', xLabel = 'Tiempo (min)', title = 'Evolución temporal', yLabel = 'Moléculas / célula' } = {}) {
   if (!points?.length || !nodes.length) return '<p class="muted">Ejecuta el modelo para ver las curvas.</p>';
-  const width = 850, height = 360, left = 70, top = 32, track = 742, vertical = 260;
+  const mobile=typeof DeviceLayout!=='undefined'&&DeviceLayout.mobile(),width=mobile?Math.max(280,Math.min(850,innerWidth-48)):850,height=mobile?280:360,left=mobile?58:70,top=32,track=width-left-38,vertical=height-100;
   const xmax = Math.max(1e-9, ...points.map(point => point[xKey]));
   const ymin = 0;
   const ymax = Math.max(1, ...points.flatMap(point => nodes.map(item => point.values[item.id] || 0)));
@@ -11067,7 +11128,7 @@ function circuitChart(points, nodes, { xKey = 'time', xLabel = 'Tiempo (min)', t
   return '<div class="circuit-chart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' +
     esc(title) + '" font-family="Arial,sans-serif" font-size="11" fill="#66748a"><rect width="100%" height="100%" fill="white"/>' +
     axes + '<path d="M' + left + ' ' + top + 'v' + vertical + 'h' + track + '" fill="none" stroke="#94a2b6"/>' + curves +
-    '<text x="440" y="345" text-anchor="middle">' + esc(xLabel) + '</text><text x="12" y="18">' + esc(yLabel) + '</text></svg>' +
+    '<text x="'+(left+track/2)+'" y="'+(height-15)+'" text-anchor="middle">' + esc(xLabel) + '</text><text x="12" y="18">' + esc(yLabel) + '</text></svg>' +
     '<div class="circuit-legend">' + nodes.map(item => '<span><i style="background:' + item.color + '"></i>' + esc(item.name) + '</span>').join('') + '</div></div>';
 }
 
@@ -11182,6 +11243,7 @@ function circuitOpen(id) {
   if (!db.circuits.some(item => item.id === id)) return;
   Object.assign(ui, { circuit: id, module: 'circuits', dashboard: 'circuits' });
   byId('shell').classList.add('expanded-workspace');
+  byId('shell').classList.remove('show-side');
   render();
 }
 
@@ -11228,18 +11290,12 @@ function circuitDashboard() {
 function circuitDesignPane(circuit, state) {
   const selected = circuit.nodes.find(item => item.id === state.selected);
   const editing = circuitWritable();
-  const options = '<div class="toolbar circuit-design-tools"><div class="segmented">' + btn('Red', 'circuit-view', attr('network', 'aria-pressed="' + (state.view === 'network') + '"')) +
-    btn('Partes', 'circuit-view', attr('parts', 'aria-pressed="' + (state.view === 'parts') + '"')) + '</div>' +
-    (editing ? btn('+ Especie', 'circuit-node-new') + btn('+ Parte', 'circuit-part-new') +
-      btn(state.connect ? 'Cancelar conexión' : 'Conectar', 'circuit-connect', 'aria-pressed="' + Boolean(state.connect) + '"') : '') +
-    btn('Validar ensamblaje','part-check-assembly') + '<span class="toolbar-gap"></span>' + btn('↶', 'circuit-undo', 'aria-label="Deshacer circuito"' + (editing && state.undo.length ? '' : ' disabled')) +
-    btn('↷', 'circuit-redo', 'aria-label="Rehacer circuito"' + (editing && state.redo.length ? '' : ' disabled')) +
-    btn('SVG', 'circuit-export', attr(state.view === 'parts' ? 'parts-svg' : 'network-svg')) + btn('PNG', 'circuit-png') +
-    '<label class="circuit-zoom-label">Zoom<input id="circuit-zoom" type="range" min="0.4" max="1.5" step="0.1" value="' + state.zoom + '"></label></div>';
-  const palette = '<aside class="circuit-palette"><b>Partes genéticas</b>' + Object.entries(circuitRoleNames).map(([role, name]) =>
+  const options = '<div class="toolbar circuit-design-tools"><div class="segmented">'+btn('Red','circuit-view',attr('network','aria-pressed="'+(state.view==='network')+'"'))+btn('Partes','circuit-view',attr('parts','aria-pressed="'+(state.view==='parts')+'"'))+'</div><div class="circuit-viewport-tools">'+btn('−','circuit-scale',attr(-1,'aria-label="Reducir esquema"'))+btn('Ajustar','circuit-fit','aria-label="Ajustar esquema a la pantalla"')+btn('+','circuit-scale',attr(1,'aria-label="Ampliar esquema"'))+'<output id="circuit-scale-label" aria-label="Zoom del esquema"></output></div>'+btn('⋯','circuit-mobile-menu','class="circuit-mobile-more" aria-label="Herramientas del circuito"')+'<div class="toolbar circuit-desktop-tools">'+
+    (editing?btn('+ Especie','circuit-node-new')+btn('+ Parte','circuit-part-new')+btn(state.connect?'Cancelar conexión':'Conectar','circuit-connect','aria-pressed="'+Boolean(state.connect)+'"'):'')+btn('Validar ensamblaje','part-check-assembly')+btn('↶','circuit-undo','aria-label="Deshacer circuito"'+(editing&&state.undo.length?'':' disabled'))+btn('↷','circuit-redo','aria-label="Rehacer circuito"'+(editing&&state.redo.length?'':' disabled'))+btn('SVG','circuit-export',attr(state.view==='parts'?'parts-svg':'network-svg'))+btn('PNG','circuit-png')+'<label class="circuit-zoom-label">Zoom<input id="circuit-zoom" type="range" min="0.08" max="6" step="0.02" value="'+state.zoom+'"></label></div></div>';
+  const mobile=DeviceLayout.mobile(),palette = '<details class="circuit-palette"'+(!mobile||state.paletteOpen?' open':'')+'><summary>Partes genéticas</summary><div class="circuit-palette-items">' + Object.entries(circuitRoleNames).map(([role, name]) =>
     btn('<svg viewBox="-24 -27 48 48" aria-hidden="true">' + circuitGlyph(role) + '</svg><span>' + name + '</span>', 'circuit-part-new',
-      attr(role, editing ? '' : 'disabled'))).join('') + '</aside>';
-  const inspector = '<aside class="circuit-inspector">' + (selected ? '<span class="eyebrow">Especie seleccionada</span><h3>' + esc(selected.name) +
+      attr(role, editing ? '' : 'disabled'))).join('') + '</div></details>';
+  const inspector = '<details class="circuit-inspector"'+(!mobile||selected||state.inspectorOpen?' open':'')+'><summary>Inspector'+(selected?' · '+esc(selected.name):'')+'</summary><div>' + (selected ? '<span class="eyebrow">Especie seleccionada</span><h3>' + esc(selected.name) +
     '</h3><p>' + esc(selected.kind === 'input' ? 'Entrada externa' : selected.gate) + '</p>' + (selected.kind === 'input' ?
       '<dl><dt>Nivel bajo / alto</dt><dd>' + selected.low + ' / ' + selected.high + '</dd><dt>Pulso</dt><dd>' + selected.start + '–' + selected.stop + ' min</dd></dl>' :
       '<dl><dt>Producción basal / máxima</dt><dd>' + selected.basal + ' / ' + selected.max + '</dd><dt>K / Hill n</dt><dd>' + selected.K + ' / ' + selected.n +
@@ -11247,11 +11303,12 @@ function circuitDesignPane(circuit, state) {
     (editing ? btn('Editar parámetros', 'circuit-node-edit', attr(selected.id)) + btn('Eliminar especie', 'circuit-node-delete', attr(selected.id)) : '') :
     '<h3>Inspector</h3><p class="muted">Selecciona una especie. Arrástrala para organizar la red o usa las flechas del teclado.</p>') +
     '<hr><b>Leyenda</b><p class="muted small">Flecha · activación<br>Barra · inhibición<br>Las conexiones de puertas aplican su función lógica.<br>Ribozima y aislador: glifos propios.</p>' +
-    (editing ? btn('Importar partes de una secuencia', 'circuit-from-sequence') : '') + '</aside>';
-  const graphics = state.view === 'parts' ? circuitPartsSVG(circuit) : circuitNetworkSVG(circuit);
-  return options + (state.connect ? '<p class="circuit-hint">Selecciona el origen y después el destino de la conexión.</p>' : '') +
-    '<div class="circuit-design-grid">' + palette + '<div class="circuit-canvas" id="circuit-canvas"><div style="transform-origin:top left;zoom:' + state.zoom + '">' + graphics + '</div></div>' + inspector + '</div>' +
-    (state.view === 'parts' ? '<p class="muted small">El orden de las partes representa el constructo. Las partes sin secuencia son símbolos de diseño.</p>' : '');
+    (editing ? btn('Importar partes de una secuencia', 'circuit-from-sequence') : '') + '</div></details>';
+  const graphics = state.view === 'parts' ? circuitPartsSVG(circuit,true,mobile?innerWidth-24:0) : circuitNetworkSVG(circuit,true,mobile);
+  return '<section class="circuit-design-pane">'+options + (state.connect ? '<p class="circuit-hint">Selecciona el origen y después el destino de la conexión.</p>' : '') +
+    '<div class="circuit-design-grid">' + palette + '<div class="circuit-canvas" id="circuit-canvas" tabindex="0" role="region" aria-label="Esquema del circuito; pellizca para ampliar y desliza para desplazar"><div id="circuit-stage"><div id="circuit-drawing">' + graphics + '</div></div></div>' + inspector + '</div>' +
+    (mobile?'<p class="muted small circuit-touch-hint">Pellizca para ampliar y desliza el esquema. Toca una especie para ver sus parámetros; activa Organizar para moverla.</p>':'')+
+    (state.view === 'parts' ? '<p class="muted small">El orden de las partes representa el constructo. Las partes sin secuencia son símbolos de diseño.</p>' : '')+'</section>';
 }
 
 function circuitAssignments(circuit, state) {
@@ -11275,7 +11332,7 @@ function circuitLogicPane(circuit, state) {
     table += result.scores.map(item => '<span class="circuit-score">Separación ON/OFF · ' + esc(circuit.nodes.find(n => n.id === item.id).name) + ' <b>' +
       (item.score === null ? '—' : item.score.toFixed(3)) + '×</b></span>').join('');
   } catch (error) { table = '<p class="callout">' + esc(error.message) + '</p>'; }
-  const source = circuit.verilog || 'module design(output Y, input A, B);\n  assign Y = ~(A | B);\nendmodule';
+  const source = state.verilogDraft ?? circuit.verilog ?? 'module design(output Y, input A, B);\n  assign Y = ~(A | B);\nendmodule';
   return '<div class="circuit-two-columns"><section class="circuit-card"><h2>Especificación lógica</h2><p class="muted">Verilog escalar con assign. Operadores ~, &amp;, | y ^.</p>' +
     '<textarea id="circuit-verilog" class="mono" rows="8" spellcheck="false" aria-label="Verilog">' + esc(source) + '</textarea><div class="toolbar">' +
     (circuitWritable() ? btn('Compilar a NOR/NOT', 'circuit-compile', 'class="primary"') : '') + btn('Exportar Verilog', 'circuit-export', attr('verilog')) + '</div>' +
@@ -11529,10 +11586,11 @@ function circuitUndo(redo = false) {
 }
 
 document.addEventListener('input', event => {
+  if(event.target.id==='circuit-verilog')circuitSession(currentCircuit()).verilogDraft=event.target.value;
   if (event.target.id === 'circuit-zoom') {
     const circuit = currentCircuit();
     circuitSession(circuit).zoom = Number(event.target.value);
-    byId('circuit-canvas').firstElementChild.style.zoom = event.target.value;
+    CircuitViewport.setZoom(Number(event.target.value));
   }
 });
 document.addEventListener('change', event => {
@@ -11633,7 +11691,7 @@ const circuitActions = {
   'circuit-new': newCircuitDialog,
   'circuit-open': circuitOpen,
   'circuit-tab': tab => { circuitSession(currentCircuit()).tab = tab; renderEditor(); },
-  'circuit-view': view => { circuitSession(currentCircuit()).view = view; renderEditor(); },
+  'circuit-view': view => { const state=circuitSession(currentCircuit());state.view=view;if(DeviceLayout.mobile())state.autoFit=true;renderEditor(); },
   'circuit-node-new': () => circuitNodeDialog(),
   'circuit-node-edit': circuitNodeDialog,
   'circuit-node': id => {
@@ -12106,7 +12164,7 @@ const DeviceLayout=(()=>{
   function settings(){return '<section class="device-settings"><h3>Versión de la interfaz</h3>'+field('Dispositivo',select('device-layout',[['auto','Automático · según el dispositivo'],['mobile','Versión móvil'],['desktop','Versión de ordenador']],preference))+'<p class="muted small">En vertical puedes alternar secuencia y mapa; el mapa conserva debajo una secuencia desplegable. En horizontal se muestran ambas vistas.</p>'+btn(CloudSync.label()?'Mi cuenta y sincronización':'Iniciar sesión y sincronizar','cloud-login')+'<details class="block-gap"><summary>Otras formas de sincronizar</summary>'+btn('Repositorio privado de GitHub','github-connect')+'</details></section>';}
   document.addEventListener('change',e=>{if(e.target.name==='device-layout')set(e.target.value);});
   let frame=0;
-  function viewportChanged(event){const changedWidth=innerWidth!==layoutWidth,rotated=event?.type==='orientationchange'||event?.type==='change';apply();if(!changedWidth&&!rotated){if(typeof positionPopup==='function')positionPopup();return;}resetTouchGestures();closePopup();if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{frame=0;apply();if(byId('bases'))renderBases();});});}
+  function viewportChanged(event){const changedWidth=innerWidth!==layoutWidth,rotated=event?.type==='orientationchange'||event?.type==='change';apply();if(!changedWidth&&!rotated){if(typeof positionPopup==='function')positionPopup();return;}resetTouchGestures();closePopup();if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{frame=0;apply();if(ui.dashboard==='circuits')renderEditor();else if(byId('bases'))renderBases();});});}
   addEventListener('resize',viewportChanged);addEventListener('orientationchange',viewportChanged);globalThis.screen?.orientation?.addEventListener?.('change',viewportChanged);globalThis.visualViewport?.addEventListener?.('resize',()=>{apply();if(typeof positionPopup==='function')positionPopup();});apply();
   return{mobile,apply,set,settings};
 })();
@@ -12118,7 +12176,7 @@ const deviceActions={
   'device-drawer':()=>{ui.mobileDrawer=!ui.mobileDrawer;const layout=document.querySelector('.sequence-layout');if(layout)layout.dataset.mobileDrawer=String(ui.mobileDrawer);const b=document.querySelector('[data-action="device-drawer"]');if(b){b.setAttribute('aria-expanded',String(ui.mobileDrawer));b.textContent='Secuencia · editar y anotar '+(ui.mobileDrawer?'▾':'▴');}renderBases();},
   'device-files':()=>byId('shell').classList.toggle('show-side'),
   'device-save':async()=>{save();await Workspace.flush();if(CloudSync.connected())await CloudSync.flush();if(GitHubSync.connected())await GitHubSync.flush();toast(CloudSync.connected()?'Guardado en tu cuenta.':GitHubSync.connected()?'Guardado y sincronizado.':Team.enabled?'Guardado en el espacio compartido.':'Guardado en este dispositivo.');},
-  'device-menu':(_,event)=>fly(event,[['Apariencia y dispositivo','appearance'],['Mi cuenta y sincronización','cloud-login'],...(active()?.kind==='sequence'?[['Anotaciones','annotation-panel'],...(active().type==='DNA'?[['Cebadores','primer-panel'],['Digestiones','enzyme-panel'],['CRISPR · diseñar gRNAs','crispr']]:[]),['Historial','tool-pane','history'],['Alineamientos','tool-pane','alignments'],['Información de la secuencia','sequence-info'],['Exportar secuencia','export-sequence'],['Ensamblar secuencias','assembly']]:active()?.kind==='alignment'?[['Realinear','align-multiple'],['Exportar alineamiento','alignment-export-menu']]:[['Dictado del cuaderno','note-dictation']]),['Importar de NCBI / UniProt / PDB','remote-import'],['Exportar varias secuencias','sequence-bulk-export'],['Proyectos','module','projects'],['Modelado de circuitos','module','circuits'],['Registros','module','registry'],['Herramientas del espacio','workspace-tools']]),
+  'device-menu':(_,event)=>fly(event,[['Apariencia y dispositivo','appearance'],['Mi cuenta y sincronización','cloud-login'],...(active()?.kind==='sequence'?[['Anotaciones','annotation-panel'],...(active().type==='DNA'?[['Cebadores','primer-panel'],['Digestiones','enzyme-panel'],['CRISPR · diseñar gRNAs','crispr']]:[]),['Historial','tool-pane','history'],['Alineamientos','tool-pane','alignments'],['Información de la secuencia','sequence-info'],['Exportar secuencia','export-sequence'],['Ensamblar secuencias','assembly']]:active()?.kind==='alignment'?[['Realinear','align-multiple'],['Exportar alineamiento','alignment-export-menu']]:[['Dictado del cuaderno','note-dictation']]),['Alinear secuencias…','align-multiple'],['Importar de NCBI / UniProt / PDB','remote-import'],['Exportar varias secuencias','sequence-bulk-export'],['Proyectos','module','projects'],['Modelado de circuitos','module','circuits'],['Registros','module','registry'],['Herramientas del espacio','workspace-tools']]),
 };
 
 // Keep captures on the editor: map SVGs are replaced during a pinch.
@@ -12509,28 +12567,99 @@ function sequenceExport(){const doc=active();show('Exportar secuencia',field('Fo
 function bulkSequenceExport(){const sequences=db.docs.filter(d=>d.kind==='sequence');if(!sequences.length)throw Error('No hay secuencias para exportar.');show('Exportar secuencias',field('Proyecto',select('sequence-export-project',[['','Todos los proyectos'],...db.projects.map(p=>[p.id,p.name])],ui.project))+field('Formato',select('sequence-export-bulk-format',[['gb','Multipart GenBank'],['fasta','Multi-FASTA'],['csv','CSV · bases, anotaciones y metadatos'],['zip','ZIP · GenBank individual y JSON completo']]))+'<p class="muted small">El ZIP incluye un GenBank y un JSON por secuencia. El JSON conserva todos los metadatos. FASTA no admite anotaciones.</p>',data=>{const project=textOf(data,'sequence-export-project'),records=sequences.filter(d=>!project||d.project===project),format=textOf(data,'sequence-export-bulk-format');if(!records.length)throw Error('El proyecto no tiene secuencias.');if(format==='zip'){const files=records.flatMap((d,i)=>{const name=(i+1)+'-'+d.name.replace(/[^\p{L}\p{N}_. -]/gu,'_');return[[name+'.gb',Lab.toGenBank(d)],[name+'.json',SequenceIO.json(d)]];});download('secuencias.zip',zipStored(files),'application/zip');}else download('secuencias.'+format,format==='gb'?records.map(d=>Lab.toGenBank(d)).join('\n'):format==='fasta'?records.map(d=>Lab.toFasta(d)).join(''):SequenceIO.csv(records));},'Descargar','Exportación');}
 const sequenceIOActions={'remote-import':()=>RemoteSequences.open(),'export-sequence':sequenceExport,'sequence-bulk-export':bulkSequenceExport};
 
+const AlignmentInputs=(()=>{
+  async function collect(docs,data,{validate=true}={}){
+    const ids=[textOf(data,'alignment-reference'),...data.getAll('alignment-row')].filter(Boolean),ordered=[...new Set(ids)].map(id=>docs.find(d=>d.id===id)).filter(Boolean),file=data.get('alignment-file'),raw=textOf(data,'alignment-raw');
+    if(file?.size>6000000||raw.length>6000000)throw Error('El archivo o texto supera 6 MB.');
+    for(const content of [raw,file?.size?await file.text():''].filter(Boolean))ordered.push(...Lab.readSequences(content,'Secuencia',textOf(data,'alignment-type')).map(r=>({...r,id:'manual_'+uuid()})));
+    if(validate&&ordered.length<2)throw Error(ordered.length?'La referencia ya cuenta como una secuencia. Añade otra para compararla: selecciónala en la lista, pégala o carga un archivo.':'Añade al menos dos secuencias, mediante la lista, texto pegado o un archivo FASTA / GenBank.');
+    if(ordered.length>10)throw Error('Se admiten hasta 10 secuencias por alineamiento.');
+    if(ordered.some(d=>d.type!==ordered[0].type))throw Error('Las secuencias deben usar el mismo alfabeto: ADN, ARN o proteína.');
+    if(ordered.reduce((n,d)=>n+d.bases.length,0)>25000)throw Error('El total supera 25 000 posiciones de entrada.');
+    return ordered;
+  }
+  return{collect};
+})();
+
+// NW scores (+2 match, -1 mismatch, -2 gap) equal n+m - 3*editDistance.
+// A band result with distance <= band width is an exact global optimum.
+function createAlignmentKernel(){
+  function tracePair(a,b,trace,width,index){let i=a.length,j=b.length,x=[],y=[];while(i||j){const direction=trace[index(i,j,width)];if(direction===0){x.push(a[--i]);y.push(b[--j]);}else if(direction===1){x.push(a[--i]);y.push('-');}else{x.push('-');y.push(b[--j]);}}return{x:x.reverse().join(''),y:y.reverse().join('')};}
+  function small(a,b){const width=b.length+1,trace=new Uint8Array((a.length+1)*width);let previous=Int32Array.from({length:width},(_,i)=>i),row=new Int32Array(width);for(let j=1;j<width;j++)trace[j]=2;
+    for(let i=1;i<=a.length;i++){row[0]=i;trace[i*width]=1;for(let j=1;j<width;j++){const diagonal=previous[j-1]+(a[i-1]===b[j-1]?0:1),up=previous[j]+1,left=row[j-1]+1,value=Math.min(diagonal,up,left);row[j]=value;trace[i*width+j]=value===diagonal?0:value===up?1:2;}[previous,row]=[row,previous];}
+    return tracePair(a,b,trace,width,(i,j,w)=>i*w+j);
+  }
+  function banded(a,b,k){if(Math.abs(a.length-b.length)>k)return null;const width=2*k+1,trace=new Uint8Array((a.length+1)*width),infinity=a.length+b.length+1;let previous=new Int32Array(b.length+1).fill(infinity),row=new Int32Array(b.length+1).fill(infinity);
+    for(let j=0;j<=Math.min(b.length,k);j++){previous[j]=j;if(j)trace[j+k]=2;}
+    for(let i=1;i<=a.length;i++){const low=Math.max(0,i-k),high=Math.min(b.length,i+k);if(low===0){row[0]=i;trace[i*width+k-i]=1;}else row[low-1]=infinity;
+      for(let j=Math.max(1,low);j<=high;j++){const diagonal=previous[j-1]+(a[i-1]===b[j-1]?0:1),up=previous[j]+1,left=row[j-1]+1,value=Math.min(diagonal,up,left);row[j]=value;trace[i*width+j-i+k]=value===diagonal?0:value===up?1:2;}
+      if(high<b.length)row[high+1]=infinity;[previous,row]=[row,previous];
+    }
+    if(previous[b.length]>k)return null;return tracePair(a,b,trace,width,(i,j,w)=>i*w+j-i+k);
+  }
+  function cost(a,b){let previous=Int32Array.from({length:b.length+1},(_,i)=>i),row=new Int32Array(b.length+1);for(let i=1;i<=a.length;i++){row[0]=i;for(let j=1;j<=b.length;j++)row[j]=Math.min(previous[j-1]+(a[i-1]===b[j-1]?0:1),previous[j]+1,row[j-1]+1);[previous,row]=[row,previous];}return previous;}
+  const reverse=text=>[...text].reverse().join('');
+  function hirschberg(a,b){if(!a.length)return{x:'-'.repeat(b.length),y:b};if(!b.length)return{x:a,y:'-'.repeat(a.length)};if(a.length<=24||b.length<=24)return small(a,b);const middle=Math.floor(a.length/2);let split=0,best=Infinity;
+    {const left=cost(a.slice(0,middle),b),right=cost(reverse(a.slice(middle)),reverse(b));for(let j=0;j<=b.length;j++){const value=left[j]+right[b.length-j];if(value<best){best=value;split=j;}}}
+    const left=hirschberg(a.slice(0,middle),b.slice(0,split)),right=hirschberg(a.slice(middle),b.slice(split));return{x:left.x+right.x,y:left.y+right.y};
+  }
+  function pair(a,b,{maxBand=256}={}){if(a===b)return{first:a,second:b,score:2*a.length,identity:a.length?100:0};let result;
+    if((a.length+1)*(b.length+1)<=1000000)result=small(a,b);
+    else{for(let k=Math.max(16,Math.abs(a.length-b.length));k<=maxBand;k*=2){result=banded(a,b,k);if(result)break;}if(!result)result=hirschberg(a,b);}
+    let equal=0,score=0;for(let i=0;i<result.x.length;i++){const x=result.x[i],y=result.y[i];if(x===y){equal++;score+=2;}else score+=x==='-'||y==='-'?-2:-1;}return{first:result.x,second:result.y,score,identity:result.x.length?100*equal/result.x.length:0};
+  }
+  function multiple(records,progress=()=>{}){if(records.length<2||records.length>10||records.some(s=>typeof s!=='string'||!s.length||!/^[A-Z*]+$/.test(s)))throw Error('Elige de 2 a 10 secuencias válidas.');if(records.reduce((n,s)=>n+s.length,0)>25000)throw Error('El total supera 25 000 posiciones.');const reference=records[0],lengths=new Uint32Array(reference.length+1),projected=[];
+    for(let r=1;r<records.length;r++){progress({completed:r-1,total:records.length-1});const result=pair(reference,records[r]),inserts=new Map(),aligned=[];let position=0;for(let i=0;i<result.first.length;i++){if(result.first[i]==='-')inserts.set(position,(inserts.get(position)||'')+result.second[i]);else{aligned.push(result.second[i]);position++;}}for(const[index,text]of inserts)lengths[index]=Math.max(lengths[index],text.length);projected.push({inserts,aligned});progress({completed:r,total:records.length-1});}
+    const width=reference.length+lengths.reduce((n,v)=>n+v,0);if(width*records.length>200000)throw Error('El resultado supera 200 000 caracteres.');return[{aligned:reference,inserts:new Map()},...projected].map(row=>{const blocks=[];for(let i=0;i<lengths.length;i++)blocks.push((row.inserts.get(i)||'').padEnd(lengths[i],'-'),row.aligned[i]||'');return blocks.join('');});
+  }
+  return{pair,multiple};
+}
+const AlignmentLocal=(()=>{
+  const workerSource=()=>"const kernel=("+createAlignmentKernel.toString()+")();self.onmessage=event=>{try{const rows=kernel.multiple(event.data,p=>self.postMessage({progress:p}));self.postMessage({rows});}catch(error){self.postMessage({error:error.message});}};";
+  function run(records,{onProgress=()=>{}}={}){let worker,url,settled=false,rejectRun;
+    const finish=()=>{settled=true;worker?.terminate();if(url)URL.revokeObjectURL(url);};
+    const promise=new Promise((resolve,reject)=>{rejectRun=reject;try{
+      if(typeof Worker==='undefined')throw Error('Este navegador no permite el cálculo local en segundo plano. Abre la app en un navegador actualizado o elige EMBL-EBI.');
+      url=URL.createObjectURL(new Blob([workerSource()],{type:'text/javascript'}));worker=new Worker(url);worker.onmessage=({data})=>{if(settled)return;if(data.progress){onProgress(data.progress);return;}finish();if(data.error)reject(Error(data.error));else resolve(data.rows);};worker.onerror=()=>{if(settled)return;finish();reject(Error('No se pudo ejecutar el motor local. Vuelve a intentarlo o elige EMBL-EBI.'));};worker.postMessage(records);
+    }catch(error){finish();reject(error);}});
+    return{promise,cancel(){if(!settled){finish();rejectRun(Error('Alineamiento cancelado. Puedes cambiar las secuencias y volver a intentarlo.'));}}};
+  }
+  return{run,workerSource};
+})();
+
 const AlignmentUI=(()=>{
   const states=new Map(),watching=new Set();
   function state(doc){if(!states.has(doc.id)){if(states.size>30)states.delete(states.keys().next().value);states.set(doc.id,{first:0,last:0,zoom:14,annotations:false});}return states.get(doc.id);}
   function rows(doc){return doc.multi?.rows||[doc.result.first,doc.result.second];}
-  function open(){const current=active(),source=current?.kind==='alignment'?current.multi?.sources||[]:[],docs=db.docs.filter(d=>d.kind==='sequence').concat(source.filter(d=>!db.docs.some(x=>x.id===d.id))),type=current?.type||current?.multi?.type||'DNA';
-    show('Alinear secuencias',field('Nombre',input('name',current?.kind==='alignment'?current.name+' · realineado':'Alineamiento','required maxlength="160"'))+field('Referencia',select('alignment-reference',[['','Primera secuencia pegada / importada'],...docs.map(d=>[d.id,d.name+' · '+d.type])],current?.kind==='sequence'?current.id:source[0]?.id||docs[0]?.id||''))+
-      '<fieldset class="plain-fieldset"><legend>Secuencias para comparar</legend><div class="items-check">'+docs.map(d=>'<label><input type="checkbox" name="alignment-row" value="'+esc(d.id)+'"'+(source.slice(1).some(s=>s.id===d.id)?' checked':'')+'> '+esc(d.name)+' · '+d.type+'</label>').join('')+'</div></fieldset>'+field('O añade FASTA / GenBank',area('alignment-raw','','rows="3" class="mono"'))+field('Archivo adicional',input('alignment-file','','type="file" accept=".fa,.fasta,.fas,.gb,.gbk"'))+
-      '<div class="dialog-grid">'+field('Alfabeto del texto pegado',select('alignment-type',[['DNA','ADN'],['RNA','ARN'],['AA','Proteína']],type))+field('Motor',select('alignment-engine',[['mafft','MAFFT v7 · EMBL-EBI'],['clustalo','Clustal Omega · EMBL-EBI'],['local','Needleman–Wunsch · local']],type==='AA'?'clustalo':'mafft'))+
-      field('Estrategia MAFFT',select('alignment-strategy',[['none','6-mer / estándar EBI'],['localpair','Local pairwise · Smith–Waterman'],['globalpair','Global pairwise · Needleman–Wunsch']]))+field('Iteraciones de refinamiento',select('alignment-iterations',[0,1,2,5,10,20,50,80,100].map(n=>[n,n]),0))+
-      field('Gap open (MAFFT)',select('alignment-gap-open',[1,1.1,1.2,1.3,1.4,1.53,1.6,1.7,1.8,1.9,2,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3].map(n=>[n,n]),1.53))+field('Gap extension (MAFFT · valor admitido por EBI)',input('alignment-gap-extension',.123,'type="number" readonly'))+'</div>'+
-      '<div id="alignment-remote-fields">'+field('Correo para el servicio EMBL-EBI',input('alignment-email','','type="email" autocomplete="email"'))+'<label class="check-row"><input type="checkbox" name="alignment-consent"> Enviar las bases de las secuencias elegidas y mi correo a EMBL-EBI para ejecutar el alineamiento.</label><p class="muted small">MAFFT y Clustal Omega se ejecutan en el servicio público de EMBL-EBI. Los nombres y metadatos no se envían. El correo no se guarda en el documento. El motor local trabaja en este dispositivo con una proyección contra la referencia; es un método distinto.</p></div>'+ '<p class="muted small">Hasta 10 secuencias y 25 000 posiciones de entrada. Las anotaciones se conservan en copias asociadas al alineamiento. Los plásmidos se alinean desde su origen actual; esta versión no ejecuta la rotación MARS de Benchling.</p>',async data=>{
-        const selected=[textOf(data,'alignment-reference'),...data.getAll('alignment-row')].filter(Boolean),ordered=[...new Set(selected)].map(id=>docs.find(d=>d.id===id));const file=data.get('alignment-file'),raw=textOf(data,'alignment-raw');if(file?.size>6000000)throw Error('El archivo supera 6 MB.');for(const content of [raw,file?.size?await file.text():''].filter(Boolean))ordered.push(...Lab.readSequences(content,'Secuencia',textOf(data,'alignment-type')).map((r,i)=>({...r,id:'manual_'+uuid()})));
-        if(ordered.length<2||ordered.length>10||ordered.some(d=>d.type!==ordered[0].type))throw Error('Selecciona de 2 a 10 secuencias del mismo alfabeto.');if(ordered.reduce((s,d)=>s+d.bases.length,0)>25000)throw Error('El total supera 25 000 posiciones.');
+  function open(mode=''){
+    const current=active(),source=current?.kind==='alignment'?current.multi?.sources||[]:[],docs=db.docs.filter(d=>d.kind==='sequence').concat(source.filter(d=>!db.docs.some(x=>x.id===d.id))),type=['DNA','RNA','AA'].includes(mode)?mode:current?.type||current?.multi?.type||'DNA',reference=current?.kind==='sequence'&&current.type===type?current.id:source[0]?.id||docs.find(d=>d.type===type)?.id||'';
+    let task=null,revision=0;
+    show('Alinear secuencias',field('Nombre',input('name',current?.kind==='alignment'?current.name+' · realineado':'Alineamiento','required maxlength="160"'))+field('1 · Secuencia de referencia',select('alignment-reference',[['','Usar la primera secuencia pegada / importada'],...docs.map(d=>[d.id,d.name+' · '+d.type])],reference))+
+      '<p class="muted small">La referencia ya cuenta como la primera secuencia. Añade una distinta para compararla, o pega/importa varias secuencias.</p><fieldset class="plain-fieldset"><legend>2 · Secuencias para comparar</legend><div class="items-check" id="alignment-comparisons">'+docs.map(d=>'<label data-alignment-id="'+esc(d.id)+'" data-alignment-type="'+d.type+'"><input type="checkbox" name="alignment-row" value="'+esc(d.id)+'"'+(source.slice(1).some(s=>s.id===d.id)?' checked':'')+'> '+esc(d.name)+' · '+d.type+'</label>').join('')+'</div><p id="alignment-empty-comparisons" class="muted small" hidden>No hay otra secuencia guardada de este alfabeto. Puedes añadirla justo debajo, sin guardarla primero en el proyecto.</p></fieldset>'+field('Pegar una comparación o varias secuencias FASTA / GenBank',area('alignment-raw','','rows="3" class="mono" placeholder="Pega aquí la segunda secuencia o un FASTA con varias secuencias"'))+field('Añadir archivo FASTA / GenBank',input('alignment-file','','type="file" accept=".fa,.fasta,.fas,.fna,.faa,.gb,.gbk,.gbff"'))+
+      '<p id="alignment-input-summary" class="callout" role="status" aria-live="polite"></p><div class="dialog-grid">'+field('Alfabeto del texto pegado',select('alignment-type',[['DNA','ADN'],['RNA','ARN'],['AA','Proteína']],type))+field('Motor',select('alignment-engine',[['local','Needleman–Wunsch · local, sin cuenta'],['mafft','MAFFT v7 · EMBL-EBI'],['clustalo','Clustal Omega · EMBL-EBI']],current?.multi?.options?.engine||'local'))+'</div>'+
+      '<details id="alignment-algorithm-settings"><summary>Parámetros del servicio</summary><div class="dialog-grid">'+field('Estrategia MAFFT',select('alignment-strategy',[['none','6-mer / estándar EBI'],['localpair','Local pairwise · Smith–Waterman'],['globalpair','Global pairwise · Needleman–Wunsch']]))+field('Iteraciones de refinamiento',select('alignment-iterations',[0,1,2,5,10,20,50,80,100].map(n=>[n,n]),0))+
+      field('Gap open (MAFFT)',select('alignment-gap-open',[1,1.1,1.2,1.3,1.4,1.53,1.6,1.7,1.8,1.9,2,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3].map(n=>[n,n]),1.53))+field('Gap extension (MAFFT · valor admitido por EBI)',input('alignment-gap-extension',.123,'type="number" readonly'))+'</div></details>'+
+      '<div id="alignment-remote-fields">'+field('Correo para el servicio EMBL-EBI',input('alignment-email','','type="email" autocomplete="email"'))+'<label class="check-row"><input type="checkbox" name="alignment-consent"> Enviar las bases de las secuencias elegidas y mi correo a EMBL-EBI para ejecutar el alineamiento.</label><p class="muted small">MAFFT y Clustal Omega usan el servicio público de EMBL-EBI. Los nombres y metadatos no se envían; el correo no se guarda.</p></div><div id="alignment-local-progress" hidden><p id="alignment-run-status" role="status" aria-live="polite"></p><button type="button" id="alignment-cancel-local">Cancelar cálculo</button></div><p class="muted small">El motor local calcula en este dispositivo, sin cuenta ni envío de datos. Usa puntuaciones globales +2 coincidencia, −1 sustitución y −2 hueco, con proyección contra la referencia para varias secuencias. Hasta 10 secuencias y 25 000 posiciones de entrada. Conserva copias de las anotaciones. No rota automáticamente los plásmidos.</p>',async data=>{
+        const ordered=await AlignmentInputs.collect(docs,data);
         const options={engine:textOf(data,'alignment-engine'),strategy:textOf(data,'alignment-strategy'),iterations:Number(data.get('alignment-iterations')),gapOpen:Number(data.get('alignment-gap-open')),gapExtension:Number(data.get('alignment-gap-extension'))};if(!Number.isInteger(options.iterations)||options.iterations<0||options.iterations>1000||![options.gapOpen,options.gapExtension].every(Number.isFinite)||options.gapOpen<1||options.gapOpen>3||options.gapExtension<0||options.gapExtension>1)throw Error('Revisa los parámetros del alineamiento.');
         const sources=ordered.map(d=>({id:d.id,name:d.name,type:d.type,bases:d.bases,features:structuredClone(d.features),metadata:structuredClone(d.metadata||{}),description:d.description||'',topology:d.topology}));let job=null,aligned;
-        if(options.engine==='local'){aligned=Tools.multiple(ordered.map(d=>d.bases));}
-        else{if(!data.has('alignment-consent'))throw Error('Para usar este motor, autoriza el envío a EMBL-EBI o elige el motor local.');job={engine:options.engine,id:await AlignmentService.submit(sources,ordered[0].type,options,textOf(data,'alignment-email')),status:'PENDING',at:Date.now()};aligned=sources.map(()=>'-');}
+        if(options.engine==='local'){
+          byId('alignment-local-progress').hidden=false;byId('alignment-run-status').textContent='Calculando en este dispositivo… Puedes cancelar el cálculo.';
+          task=AlignmentLocal.run(ordered.map(d=>d.bases),{onProgress:p=>{const n=byId('alignment-run-status');if(n)n.textContent='Comparaciones completadas: '+p.completed+' de '+p.total;}});
+          try{aligned=await task.promise;}finally{task=null;const n=byId('alignment-local-progress');if(n)n.hidden=true;}
+        }else{if(!data.has('alignment-consent'))throw Error('Para usar este motor, autoriza el envío a EMBL-EBI o elige el motor local.');job={engine:options.engine,id:await AlignmentService.submit(sources,ordered[0].type,options,textOf(data,'alignment-email')),status:'PENDING',at:Date.now()};aligned=sources.map(()=>'-');}
         const doc=newDoc('alignment',{name:nameOf(data),names:sources.map(d=>d.name),sourceIds:sources.filter(s=>db.docs.some(d=>d.id===s.id)).map(s=>s.id),result:AlignmentCore.result(aligned),multi:{rows:aligned,consensus:Tools.consensus(aligned,ordered[0].type),type:ordered[0].type,sources,options,...(job?{job}:{})}});commitDoc(doc);if(job)watch(doc);
       },'Crear alineamiento','Alineamientos');
-    remoteFields();
+    byId('alignment-cancel-local').addEventListener('click',event=>{event.stopPropagation();task?.cancel();});
+    async function refresh(){const token=++revision,ref=document.querySelector('[name="alignment-reference"]')?.value,referenceDoc=docs.find(d=>d.id===ref),typeControl=document.querySelector('[name="alignment-type"]'),alphabet=referenceDoc?.type||typeControl.value;let available=0;
+      for(const label of document.querySelectorAll('[data-alignment-id]')){const box=label.querySelector('input'),visible=label.dataset.alignmentId!==ref&&label.dataset.alignmentType===alphabet;label.hidden=!visible;box.disabled=!visible;if(!visible)box.checked=false;else available++;}byId('alignment-empty-comparisons').hidden=available>0;
+      const summary=byId('alignment-input-summary');try{const input=new FormData(byId('form')),records=await AlignmentInputs.collect(docs,input,{validate:false});if(token!==revision||!summary.isConnected)return;const count=records.length;summary.textContent=count+' secuencia(s) preparadas · '+records.reduce((n,d)=>n+d.bases.length,0)+' posiciones'+(count<2?' · Añade '+(referenceDoc?'una comparación':'al menos dos secuencias')+' para continuar.':' · Lista para alinear.');}catch(error){if(token===revision)summary.textContent=error.message;}
+    }
+    document.querySelector('[name="alignment-reference"]').addEventListener('change',()=>{const ref=docs.find(d=>d.id===document.querySelector('[name="alignment-reference"]').value);if(ref)document.querySelector('[name="alignment-type"]').value=ref.type;refresh();});
+    for(const n of document.querySelectorAll('[name="alignment-row"],[name="alignment-raw"],[name="alignment-file"],[name="alignment-type"]'))n.addEventListener(n.name==='alignment-raw'?'input':'change',refresh);
+    remoteFields();refresh();
   }
-  function remoteFields(){const n=byId('alignment-remote-fields'),engine=document.querySelector('[name="alignment-engine"]')?.value;if(n)n.hidden=engine==='local';const iterations=document.querySelector('[name="alignment-iterations"]');if(iterations){const current=Number(iterations.value),values=engine==='clustalo'?[0,1,2,3,4,5]:[0,1,2,5,10,20,50,80,100];iterations.innerHTML=values.map(v=>option(v,v,values.includes(current)?current:0)).join('');}}
+  function remoteFields(){const engine=document.querySelector('[name="alignment-engine"]')?.value;for(const id of ['alignment-remote-fields','alignment-algorithm-settings']){const n=byId(id);if(n)n.hidden=engine==='local';}const iterations=document.querySelector('[name="alignment-iterations"]');if(iterations){const current=Number(iterations.value),values=engine==='clustalo'?[0,1,2,3,4,5]:[0,1,2,5,10,20,50,80,100];iterations.innerHTML=values.map(v=>option(v,v,values.includes(current)?current:0)).join('');}}
   async function watch(doc){if(watching.has(doc.id)||!doc.multi?.job||['FINISHED','ERROR','NOT_FOUND'].includes(doc.multi.job.status))return;watching.add(doc.id);let attempts=0;
     try{while(attempts++<90&&db.docs.includes(doc)){const job=doc.multi.job,status=await AlignmentService.status(job.engine,job.id);job.status=status;if(status==='FINISHED'){const aligned=AlignmentCore.parse(await AlignmentService.output(job.engine,job.id),doc.multi.sources);doc.multi.rows=aligned;doc.multi.consensus=Tools.consensus(aligned,doc.multi.type);doc.result=AlignmentCore.result(aligned);doc.updated=Date.now();save();if(active()?.id===doc.id)renderEditor();return;}
         if(['ERROR','FAILURE','NOT_FOUND'].includes(status))throw Error('El servicio informó: '+status);save();if(active()?.id===doc.id)paintJob(doc);await new Promise(r=>setTimeout(r,4000));}
@@ -12670,6 +12799,50 @@ const TranslationContext=(()=>{
   return{record,create,copy};
 })();
 const translationContextActions={'translation-copy-aa':index=>TranslationContext.copy(index,true),'translation-copy-bases':index=>TranslationContext.copy(index,false),'translation-new-aa':index=>TranslationContext.create(index)};
+
+const CircuitNavigation=(()=>{
+  const clamp=value=>Math.max(.08,Math.min(6,value));
+  const fit=(size,viewport,parts=false)=>clamp(Math.min(1.5,(viewport.width-16)/size.width,parts?Infinity:(viewport.height-16)/size.height));
+  function anchor(oldScale,newScale,{left,top,offsetX=0,offsetY=0,nextOffsetX=0,nextOffsetY=0,x,y}){return{left:(left+x-offsetX)/oldScale*newScale+nextOffsetX-x,top:(top+y-offsetY)/oldScale*newScale+nextOffsetY-y};}
+  return{clamp,fit,anchor};
+})();
+const CircuitViewport=(()=>{
+  let current=null;
+  function release(){current?.release();current=null;}
+  function bind(circuit){release();const canvas=byId('circuit-canvas'),drawing=byId('circuit-drawing'),stage=byId('circuit-stage');if(!circuit||!canvas||!drawing||!stage)return;
+    const state=circuitSession(circuit),view=state.view,mobile=DeviceLayout.mobile();if(state.autoFit===undefined)state.autoFit=mobile;
+    let scale=state.zoom||1,partsWidth=0,observer,frame=0,gesture=null,ignoreClickUntil=0;const points=new Map(),listeners=[];
+    const listen=(name,fn,options)=>{canvas.addEventListener(name,fn,options);listeners.push([name,fn,options]);};
+    const size=()=>{const box=drawing.querySelector('svg').viewBox.baseVal;return{width:box.width,height:box.height};};
+    function apply(value,point){const box=canvas.getBoundingClientRect(),local=point?{x:point.x-box.left,y:point.y-box.top}:null,old={left:canvas.scrollLeft,top:canvas.scrollTop,offsetX:stage.offsetLeft,offsetY:stage.offsetTop},previous=scale;scale=CircuitNavigation.clamp(value);state.zoom=scale;const natural=size();stage.style.width=natural.width*scale+'px';stage.style.height=natural.height*scale+'px';stage.style.marginTop=Math.max(0,(canvas.clientHeight-natural.height*scale)/2)+'px';drawing.style.width=natural.width+'px';drawing.style.height=natural.height+'px';drawing.style.transform='scale('+scale+')';
+      if(local){const next=CircuitNavigation.anchor(previous,scale,{...old,...local,nextOffsetX:stage.offsetLeft,nextOffsetY:stage.offsetTop});canvas.scrollLeft=next.left;canvas.scrollTop=next.top;}
+      const label=byId('circuit-scale-label');if(label)label.textContent=Math.round(scale*100)+'%';const slider=byId('circuit-zoom');if(slider)slider.value=scale;
+    }
+    function fit(){state.autoFit=true;reflow();canvas.scrollLeft=canvas.scrollTop=0;}
+    function reflow(){if(!canvas.isConnected)return;if(mobile){const section=canvas.closest('.circuit-section'),tools=section.querySelector('.circuit-design-tools'),minimum=innerWidth>innerHeight?120:160,height=Math.max(minimum,Math.min(560,section.clientHeight-tools.offsetHeight-118));if(Math.abs(canvas.clientHeight-height)>1)canvas.style.height=height+'px';}const columns=Math.max(1,Math.min(7,Math.floor((canvas.clientWidth-20)/120)));if(mobile&&state.view==='parts'&&columns!==partsWidth){partsWidth=columns;drawing.innerHTML=circuitPartsSVG(circuit,true,canvas.clientWidth);}apply(state.autoFit?CircuitNavigation.fit(size(),{width:canvas.clientWidth,height:canvas.clientHeight},state.view==='parts'):scale);}
+    function setZoom(value,point){state.autoFit=false;const box=canvas.getBoundingClientRect();apply(value,point||{x:box.left+canvas.clientWidth/2,y:box.top+canvas.clientHeight/2});}
+    function cancel(){for(const id of points.keys())try{canvas.releasePointerCapture(id);}catch{}points.clear();gesture=null;if(circuitDrag?.circuit===circuit){circuitDrag.group.setAttribute('transform','translate('+circuitDrag.x+' '+circuitDrag.y+')');circuitDrag=null;}}
+    const geometry=()=>{const[a,b]=[...points.values()];return{distance:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),x:(a.x+b.x)/2,y:(a.y+b.y)/2};};
+    listen('pointerdown',event=>{if(event.pointerType!=='touch')return;points.set(event.pointerId,{x:event.clientX,y:event.clientY});if(points.size===1){gesture={x:event.clientX,y:event.clientY,left:canvas.scrollLeft,top:canvas.scrollTop,target:event.target,moved:false,delegate:Boolean(state.editLayout&&event.target.closest('[data-circuit-node]'))};if(gesture.delegate)return;}else if(points.size===2){if(circuitDrag){circuitDrag.group.setAttribute('transform','translate('+circuitDrag.x+' '+circuitDrag.y+')');circuitDrag=null;}gesture={...geometry(),pinch:true,moved:true};}
+      event.preventDefault();event.stopImmediatePropagation();try{canvas.setPointerCapture(event.pointerId);}catch{}
+    },{capture:true,passive:false});
+    listen('pointermove',event=>{if(!points.has(event.pointerId)||!gesture)return;points.set(event.pointerId,{x:event.clientX,y:event.clientY});if(gesture.delegate&&points.size===1)return;event.preventDefault();event.stopImmediatePropagation();if(points.size>=2){const g=geometry();setZoom(scale*g.distance/gesture.distance,{x:g.x,y:g.y});gesture={...g,pinch:true,moved:true};}else if(!gesture.pinch){if(Math.hypot(event.clientX-gesture.x,event.clientY-gesture.y)>6)gesture.moved=true;canvas.scrollLeft=gesture.left+gesture.x-event.clientX;canvas.scrollTop=gesture.top+gesture.y-event.clientY;}}, {capture:true,passive:false});
+    function end(event){if(!points.has(event.pointerId))return;points.delete(event.pointerId);const held=gesture;if(held?.delegate&&!held.pinch){if(!points.size)gesture=null;return;}event.preventDefault();event.stopImmediatePropagation();ignoreClickUntil=Date.now()+700;try{canvas.releasePointerCapture(event.pointerId);}catch{}
+      if(event.type==='pointercancel'){cancel();return;}if(points.size){const p=[...points.values()][0];gesture={x:p.x,y:p.y,left:canvas.scrollLeft,top:canvas.scrollTop,pinch:true,moved:true};return;}gesture=null;
+      if(held&&!held.moved){const target=held.target.closest('[data-action]');if(target)runAction(target.dataset.action,target.dataset.value,event);}
+    }
+    listen('pointerup',end,{capture:true});listen('pointercancel',end,{capture:true});listen('lostpointercapture',event=>{if(points.has(event.pointerId))cancel();});
+    listen('click',event=>{if(Date.now()<ignoreClickUntil){event.preventDefault();event.stopImmediatePropagation();}},{capture:true});
+    listen('wheel',event=>{if(!(event.ctrlKey||event.metaKey))return;event.preventDefault();setZoom(scale*Math.exp(-event.deltaY*.002),{x:event.clientX,y:event.clientY});},{passive:false});
+    if(typeof ResizeObserver!=='undefined'){observer=new ResizeObserver(()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(reflow);});observer.observe(canvas);}
+    current={setZoom,fit,cancel,scale:()=>scale,release(){state.viewport={view,left:canvas.scrollLeft,top:canvas.scrollTop,scale,offsetX:stage.offsetLeft,offsetY:stage.offsetTop,width:canvas.clientWidth,height:canvas.clientHeight};cancel();observer?.disconnect();cancelAnimationFrame(frame);for(const[name,fn,options]of listeners)canvas.removeEventListener(name,fn,options);}};reflow();
+    const previous=state.viewport;if(!state.autoFit&&previous?.view===state.view){canvas.scrollLeft=(previous.left+previous.width/2-previous.offsetX)/previous.scale*scale+stage.offsetLeft-canvas.clientWidth/2;canvas.scrollTop=(previous.top+previous.height/2-previous.offsetY)/previous.scale*scale+stage.offsetTop-canvas.clientHeight/2;}
+  }
+  addEventListener('blur',()=>current?.cancel());
+  document.addEventListener('toggle',event=>{const circuit=currentCircuit();if(!circuit)return;const state=circuitSession(circuit);if(event.target.classList?.contains('circuit-palette'))state.paletteOpen=event.target.open;if(event.target.classList?.contains('circuit-inspector'))state.inspectorOpen=event.target.open;},true);
+  const actions={'circuit-fit':()=>current?.fit(),'circuit-scale':value=>{if(current)current.setZoom(current.scale()*Math.pow(1.3,Number(value)));},'circuit-arrange':()=>{const state=circuitSession(currentCircuit());state.editLayout=!state.editLayout;renderEditor();},'circuit-mobile-menu':(_,event)=>{const state=circuitSession(currentCircuit());fly(event,[...(circuitWritable()?[['Añadir especie','circuit-node-new'],['Añadir parte','circuit-part-new'],[state.connect?'Cancelar conexión':'Conectar especies','circuit-connect'],[state.editLayout?'Terminar organización':'Organizar especies','circuit-arrange'],...(state.undo.length?[['Deshacer','circuit-undo']]:[]),...(state.redo.length?[['Rehacer','circuit-redo']]:[])]:[]),['Validar ensamblaje','part-check-assembly'],['Exportar SVG','circuit-export',state.view==='parts'?'parts-svg':'network-svg'],['Exportar PNG','circuit-png']]);}};
+  return{bind,release,setZoom:value=>current?.setZoom(value),actions};
+})();
 
 const dialog = byId('dialog');
 let onSubmit;
@@ -13254,7 +13427,7 @@ const actions = {
     const shell = byId('shell');
     const collapse = same && !ui.dashboard && !shell.classList.contains('hide-side') && innerWidth > 500;
     Object.assign(ui, { module: value, dashboard: Object.hasOwn(moduleNames, value) && value !== 'home' ? value : '', query: '', filter: '' });
-    byId('shell').classList.toggle('show-side', !same || !byId('shell').classList.contains('show-side'));
+    byId('shell').classList.toggle('show-side', (!DeviceLayout.mobile()||['home','projects','search','registry'].includes(value))&&(!same || !byId('shell').classList.contains('show-side')));
     shell.classList.toggle('hide-side', collapse);
     shell.classList.toggle('expanded-workspace', ['models', 'circuits'].includes(value));
     renderRail();
@@ -13447,7 +13620,7 @@ document.addEventListener('focusin', event => {
 });
 Object.assign(actions, advancedActions, referenceActions, featureActions, sequenceActions, mapToolActions, mapExportActions,
   molecularSettingActions, digestActions, primerEditorActions, primerPanelActions, circuitActions, themeActions, annotationActions, annotationGridActions,
-  { appearance: () => show('Apariencia', Theme.settings(), null, '', 'Mesa Molecular') }, Team.actions,codonActions,copyPanelActions,crisprActions,sequenceIOActions,AlignmentUI.actions,AssemblyUI.actions,explorerContextActions,translationContextActions);
+  { appearance: () => show('Apariencia', Theme.settings(), null, '', 'Mesa Molecular') }, Team.actions,codonActions,copyPanelActions,crisprActions,sequenceIOActions,AlignmentUI.actions,AssemblyUI.actions,explorerContextActions,translationContextActions,CircuitViewport.actions);
 Workspace.start();
 
 </script>

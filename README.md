@@ -1,6 +1,6 @@
 # Mesa Molecular
 
-Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.9.
+Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.10.
 
 [Abrir aplicación](https://camilo31-svg.github.io/mesa-molecular/)
 
@@ -24,9 +24,15 @@ Consulta accessions de NCBI Nucleotide y Protein, UniProtKB o identificadores de
 
 La información de secuencia ofrece GenBank (colores y conversión de tipos opcionales), FASTA, SBOL 2 RDF, CSV, JSON y mapas SVG. La exportación de varias secuencias ofrece multipart GenBank, multi-FASTA, CSV y ZIP de GenBank + JSON. JSON conserva el registro completo; FASTA representa nombres y bases. Se conserva la distinción de mayúsculas/minúsculas en FASTA.
 
+## Modelado en móvil
+
+Los esquemas aprovechan todo el ancho de la pantalla. Ajustar centra la red completa; las partes se distribuyen por filas según el ancho disponible. Puedes ampliar, pellizcar y desplazar el dibujo. Partes genéticas e Inspector son paneles plegables. Organizar habilita el movimiento de especies; un deslizamiento normal mueve la vista. Las pestañas, gráficos, lógica e intercambio se ajustan a móvil vertical y horizontal.
+
 ## Alineamientos y ensamblajes
 
-El alineamiento ofrece MAFFT y Clustal Omega mediante el servicio oficial de EMBL-EBI. Requiere un correo válido y autorización explícita dentro de la app para enviar las bases al servicio; el correo no se guarda en el documento. Los parámetros se limitan a los admitidos por EBI (por ejemplo, gap extension de MAFFT 0.123), y no reproducen todos los valores de Benchling. El trabajo queda identificado para recuperar su resultado. El motor local Needleman–Wunsch y la proyección contra referencia funcionan sin enviar datos. No se ejecutó un trabajo remoto real durante esta revisión; se validaron el protocolo con dobles y los parámetros con el servicio real.
+El asistente cuenta la referencia una vez y muestra las comparaciones preparadas. Puedes añadir la segunda secuencia desde la lista, pegándola o cargando un archivo, sin guardarla antes. El motor local es la opción inicial: calcula en segundo plano y permite cancelar. Se eliminó el antiguo límite de cuatro millones de celdas mediante bandas adaptativas y división lineal en memoria; se conservan los límites de diez secuencias y 25 000 posiciones de entrada. Las puntuaciones son +2 coincidencia, −1 sustitución y −2 hueco; los empates pueden colocar los huecos de distintas formas.
+
+El alineamiento también ofrece MAFFT y Clustal Omega mediante el servicio oficial de EMBL-EBI. Requiere un correo válido y autorización explícita dentro de la app para enviar las bases al servicio; el correo no se guarda en el documento. Los parámetros se limitan a los admitidos por EBI (por ejemplo, gap extension de MAFFT 0.123), y no reproducen todos los valores de Benchling. El trabajo queda identificado para recuperar su resultado. El motor local Needleman–Wunsch y la proyección contra referencia funcionan sin enviar datos. No se ejecutó un trabajo remoto real durante esta revisión; se validaron el protocolo con dobles y los parámetros con el servicio real.
 
 La vista incluye filas con nombres fijos, coordenadas, diferencias, mini mapa, selección por columnas, búsqueda, anotaciones opcionales y exportación FASTA/Clustal/CSV de diferencias/JSON. En móvil se desplaza horizontal y verticalmente. No incorpora todavía MARS, edición de trazas en el alineamiento ni todas las opciones de Benchling.
 
