@@ -1,16 +1,32 @@
 # Mesa Molecular
 
-Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.7.
+Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.8.
 
 [Abrir aplicación](https://camilo31-svg.github.io/mesa-molecular/)
 
 ## Cuaderno y móvil
+
+La versión aparece en la cabecera. Las pestañas abiertas permanecen arriba y la activa se lleva al área visible. Tocar o extender una selección no abre el menú: aparece al mantener el dedo quieto 1,2 segundos. Soltar después de arrastrar conserva la selección. El cuaderno usa texto editable de 16 px en móvil para evitar el zoom de foco de Safari; la página no se desplaza fuera de su contenedor.
 
 Inserta tablas con el selector de filas/columnas y edita sus celdas dentro de la entrada. Admite fórmulas, referencias absolutas, pegado de hojas de cálculo, estadísticas y CSV. El botón de dictado usa el servicio del navegador cuando está disponible.
 
 En Configuración → Apariencia puedes elegir Automático, Móvil u Ordenador. En móvil vertical alternas secuencia y mapa, con una secuencia desplegable debajo del mapa; al girar se muestran ambas vistas. Admite pellizco para ampliar y giro con dos dedos en el mapa circular. Tocar una base la selecciona; mantener pulsado conserva la selección y abre su menú. Puedes extenderla arrastrando sus extremos o manteniendo pulsado y arrastrando. Un deslizamiento rápido desplaza la secuencia.
 
 Al cambiar de orientación se limpian los gestos pendientes y se recalculan las filas. Reducir el zoom al mínimo restablece la vista. Run digest cierra el inspector en móvil. El gel se ajusta al espacio disponible al abrir/cerrar la secuencia; sus opciones y carriles tienen controles desplegables. Más se limita al área sobre la navegación inferior y permite desplazarse por todas sus opciones.
+
+## Importación y exportación
+
+Consulta accessions de NCBI Nucleotide y Protein, UniProtKB o identificadores de RCSB PDB. Se conservan anotaciones y metadatos originales, con procedencia y fecha de consulta. PDB importa una secuencia canónica por entidad polimérica y registra sus cadenas. Los campos GenBank de origen, accession/version, referencias y qualifiers se conservan; las ubicaciones no representables quedan en los metadatos originales sin dibujarse.
+
+La información de secuencia ofrece GenBank (colores y conversión de tipos opcionales), FASTA, SBOL 2 RDF, CSV, JSON y mapas SVG. La exportación de varias secuencias ofrece multipart GenBank, multi-FASTA, CSV y ZIP de GenBank + JSON. JSON conserva el registro completo; FASTA representa nombres y bases. Se conserva la distinción de mayúsculas/minúsculas en FASTA.
+
+## Alineamientos y ensamblajes
+
+El alineamiento ofrece MAFFT y Clustal Omega mediante el servicio oficial de EMBL-EBI. Requiere un correo válido y autorización explícita dentro de la app para enviar las bases al servicio; el correo no se guarda en el documento. Los parámetros se limitan a los admitidos por EBI (por ejemplo, gap extension de MAFFT 0.123), y no reproducen todos los valores de Benchling. El trabajo queda identificado para recuperar su resultado. El motor local Needleman–Wunsch y la proyección contra referencia funcionan sin enviar datos. No se ejecutó un trabajo remoto real durante esta revisión; se validaron el protocolo con dobles y los parámetros con el servicio real.
+
+La vista incluye filas con nombres fijos, coordenadas, diferencias, mini mapa, selección por columnas, búsqueda, anotaciones opcionales y exportación FASTA/Clustal/CSV de diferencias/JSON. En móvil se desplaza horizontal y verticalmente. No incorpora todavía MARS, edición de trazas en el alineamiento ni todas las opciones de Benchling.
+
+El asistente ofrece digestión y ligación, Golden Gate con comprobación de extremos e inexistencia de sitios IIS restantes, Gibson con homología existente o diseño de cebadores con colas, y concatenación. Revisa el producto antes de crearlo. Los cebadores diseñados pueden guardarse como oligos y anotarse en el producto; las anotaciones y la procedencia de los fragmentos se conservan. Son simulaciones de secuencia y Tm teórica, no validaciones experimentales.
 
 ## Codones, copiado y CRISPR
 
