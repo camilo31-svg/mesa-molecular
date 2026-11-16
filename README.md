@@ -1,6 +1,6 @@
 # Mesa Molecular
 
-Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.10.
+Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.11.
 
 [Abrir aplicación](https://camilo31-svg.github.io/mesa-molecular/)
 
@@ -25,6 +25,8 @@ Consulta accessions de NCBI Nucleotide y Protein, UniProtKB o identificadores de
 La información de secuencia ofrece GenBank (colores y conversión de tipos opcionales), FASTA, SBOL 2 RDF, CSV, JSON y mapas SVG. La exportación de varias secuencias ofrece multipart GenBank, multi-FASTA, CSV y ZIP de GenBank + JSON. JSON conserva el registro completo; FASTA representa nombres y bases. Se conserva la distinción de mayúsculas/minúsculas en FASTA.
 
 ## Modelado en móvil
+
+Las TUs y los módulos se muestran como bloques compactos y cerrados. Mantener un bloque pulsado 0,8 segundos abre sus opciones de ampliación, componentes, propiedades y origen. Ampliar enfoca el bloque sin descomponerlo; Ver componentes permite recorrer módulo → TU → piezas y volver con la ruta superior. Las series completas de partes asociadas a una misma especie se agrupan como TUs de diseño, sin alterar los datos ni crear identidades biológicas.
 
 Los esquemas aprovechan todo el ancho de la pantalla. Ajustar centra la red completa; las partes se distribuyen por filas según el ancho disponible. Puedes ampliar, pellizcar y desplazar el dibujo. Partes genéticas e Inspector son paneles plegables. Organizar habilita el movimiento de especies; un deslizamiento normal mueve la vista. Las pestañas, gráficos, lógica e intercambio se ajustan a móvil vertical y horizontal.
 
