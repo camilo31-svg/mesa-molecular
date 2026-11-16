@@ -1,12 +1,12 @@
 # Mesa Molecular
 
-Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.8.
+Aplicación independiente de edición molecular, cuaderno de laboratorio y modelado de circuitos. Versión 6.9.
 
 [Abrir aplicación](https://camilo31-svg.github.io/mesa-molecular/)
 
 ## Cuaderno y móvil
 
-La versión aparece en la cabecera. Las pestañas abiertas permanecen arriba y la activa se lleva al área visible. Tocar o extender una selección no abre el menú: aparece al mantener el dedo quieto 1,2 segundos. Soltar después de arrastrar conserva la selección. El cuaderno usa texto editable de 16 px en móvil para evitar el zoom de foco de Safari; la página no se desplaza fuera de su contenedor.
+La versión aparece en la cabecera. Las pestañas abiertas permanecen arriba y la activa se lleva al área visible. Tocar o extender una selección no abre el menú: aparece al mantener el dedo quieto 0,8 segundos. Soltar después de arrastrar conserva la selección. El cuaderno usa texto editable de 16 px en móvil para evitar el zoom de foco de Safari; la página no se desplaza fuera de su contenedor.
 
 Inserta tablas con el selector de filas/columnas y edita sus celdas dentro de la entrada. Admite fórmulas, referencias absolutas, pegado de hojas de cálculo, estadísticas y CSV. El botón de dictado usa el servicio del navegador cuando está disponible.
 
@@ -14,7 +14,11 @@ En Configuración → Apariencia puedes elegir Automático, Móvil u Ordenador. 
 
 Al cambiar de orientación se limpian los gestos pendientes y se recalculan las filas. Reducir el zoom al mínimo restablece la vista. Run digest cierra el inspector en móvil. El gel se ajusta al espacio disponible al abrir/cerrar la secuencia; sus opciones y carriles tienen controles desplegables. Más se limita al área sobre la navegación inferior y permite desplazarse por todas sus opciones.
 
+Crear muestra el buscador sin activarlo: toca Search para escribir. El menú se recoloca al abrir el teclado, sin descartar sus opciones ni el documento. El click derecho en los archivos del explorador y las pestañas permite abrir su carpeta, renombrar, mover, copiar o archivar en la papelera; las secuencias también se pueden exportar desde allí.
+
 ## Importación y exportación
+
+Antes de guardar una importación desde archivo, texto, JSON, hoja de cálculo o proveedor, revisa la topología de cada secuencia. ADN y ARN permiten elegir lineal o circular; se conserva como valor inicial el del origen. Proteínas y oligos usan topología lineal.
 
 Consulta accessions de NCBI Nucleotide y Protein, UniProtKB o identificadores de RCSB PDB. Se conservan anotaciones y metadatos originales, con procedencia y fecha de consulta. PDB importa una secuencia canónica por entidad polimérica y registra sus cadenas. Los campos GenBank de origen, accession/version, referencias y qualifiers se conservan; las ubicaciones no representables quedan en los metadatos originales sin dibujarse.
 
@@ -29,6 +33,8 @@ La vista incluye filas con nombres fijos, coordenadas, diferencias, mini mapa, s
 El asistente ofrece digestión y ligación, Golden Gate con comprobación de extremos e inexistencia de sitios IIS restantes, Gibson con homología existente o diseño de cebadores con colas, y concatenación. Revisa el producto antes de crearlo. Los cebadores diseñados pueden guardarse como oligos y anotarse en el producto; las anotaciones y la procedencia de los fragmentos se conservan. Son simulaciones de secuencia y Tm teórica, no validaciones experimentales.
 
 ## Codones, copiado y CRISPR
+
+El menú contextual de una traducción permite copiar sus aminoácidos o sus bases orientadas, y crear una secuencia AA con la hebra, el marco y el código genético de la anotación. Se guarda la procedencia de la secuencia derivada.
 
 Pulsar un aminoácido selecciona sus tres bases, también en la hebra inversa, traducciones unidas y cruces del origen. Copiar abre las seis variantes de ADN, ARN y traducción, en ambas orientaciones. La opción de copia parcial ajusta el marco del CDS y no conserva la identidad de una TU incompleta.
 

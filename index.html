@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="mesa-version" content="6.8">
+  <meta name="mesa-version" content="6.9">
   <meta name="description" content="Cuaderno local y editor de secuencias para tu laboratorio.">
   <meta name="mesa-cloud-url" content="https://ymwftzisbbwzmkfpvewm.supabase.co"><meta name="mesa-cloud-key" content="sb_publishable_jjtD1azTqELVLxnqUGhdDw_H9kd9dsB"><meta name="mesa-github-owner" content="camilo31-svg"><meta name="mesa-github-repo" content="mesa-molecular-datos"><title>Mesa Molecular</title>
   <style>
@@ -1028,6 +1028,8 @@ html[data-layout="mobile"][data-orientation="landscape"] .map-body { min-height:
 html[data-layout="mobile"][data-orientation="landscape"] .device-sequence-tools { display:none; }
 html[data-layout="mobile"] .map-body:not(.linear-body) .reference-plasmid { height:100%; width:100%; min-width:0; max-height:100%; }
 html[data-layout="mobile"] #bases { touch-action:none; overscroll-behavior:contain; -webkit-touch-callout:none; }
+#bases,#bases *,svg[data-sequence-map],svg[data-sequence-map] * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+.flyout-search { position:sticky; top:0; z-index:1; }
 html[data-layout="mobile"] .flyout { z-index:15; width:min(300px,calc(100vw - 12px)); overscroll-behavior:contain; padding:4px 0; }
 html[data-layout="mobile"] .flyout-item { min-height:42px; }
 html[data-layout="mobile"] #map-pane .map-content:has(.digest-gel-page) { overflow:hidden; min-height:0; display:flex; }
@@ -6019,7 +6021,7 @@ const createGroups = [
   ['DNA / RNA sequence', [
     ['New DNA / RNA sequence', 'new-sequence', 'DNA'], ['New DNA / RNA alignment', 'align-multiple'],
     ['Import DNA / RNA sequences', 'import'], ['Import from NCBI / UniProt / PDB', 'remote-import'], ['Import DNA / RNA sequences from spreadsheet', 'spreadsheet-import', 'DNA'],
-    ['Assemble DNA / RNA sequences by concatenation', 'assembly'],
+    ['Assemble DNA / RNA sequences by concatenation', 'assembly', 'concat'],
   ], '', 'sequence'],
   ['AA sequence', [
     ['New AA sequence', 'new-sequence', 'AA'], ['New AA alignment', 'align-multiple'],
@@ -6028,10 +6030,10 @@ const createGroups = [
   ], '', 'alignment'],
   ['Oligo', [
     ['New DNA oligo', 'new-sequence', 'oligo'], ['Import DNA oligos from spreadsheet', 'spreadsheet-import', 'oligo'],
-    ['Assemble oligos by concatenation', 'assembly'],
+    ['Assemble oligos by concatenation', 'assembly', 'concat'],
   ], '', 'primers'],
   ['Assembly', [
-    ['Assemble DNA sequences by cloning', 'assembly'], ['Assemble sequences by concatenation', 'assembly'],
+    ['Assemble DNA sequences by cloning', 'assembly'], ['Assemble sequences by concatenation', 'assembly', 'concat'],
   ], '', 'models'],
   ['CRISPR', [['Design guides on the open sequence', 'crispr-active']], '', 'target'],
   ['Entity from schema', 'new-entity', '', 'entity'],
@@ -6044,6 +6046,17 @@ function closePopup() {
   if (!popup) return;
   popup.node.remove();
   popup = null;
+}
+
+function positionPopup(){
+  if(!popup)return;
+  const{node,anchor,options={}}=popup,rect=anchor.getBoundingClientRect(),viewport=globalThis.visualViewport;
+  const top=viewport?.offsetTop||0,width=viewport?.width||innerWidth,height=viewport?.height||innerHeight;
+  const mobile=typeof DeviceLayout!=='undefined'&&DeviceLayout.mobile(),nav=mobile?document.querySelector('#device-nav'):null;
+  const limit=Math.min(top+height-6,nav?nav.getBoundingClientRect().top-6:Infinity);
+  node.style.maxHeight=Math.max(40,limit-top-8)+'px';
+  node.style.left=Math.max(4,Math.min(options.point?.x??(options.global?rect.right:rect.left),width-node.getBoundingClientRect().width-4))+'px';
+  node.style.top=Math.max(top+4,Math.min(options.point?.y??(options.global?rect.top:rect.bottom+3),limit-node.getBoundingClientRect().height))+'px';
 }
 
 function flyout(anchor, choices, options = {}) {
@@ -6106,18 +6119,13 @@ function flyout(anchor, choices, options = {}) {
   };
   showRows('');
   (anchor.closest('dialog[open]')||document.body).append(node);
-  popup = { node, anchor };
-  const mobile=typeof DeviceLayout!=='undefined'&&DeviceLayout.mobile(),nav=mobile?document.querySelector('#device-nav'):null;
-  const limit=nav?Math.min(innerHeight-6,nav.getBoundingClientRect().top-6):innerHeight-6;
-  node.style.maxHeight=Math.max(80,limit-8)+'px';
-  node.style.left=Math.max(4,Math.min(parseFloat(node.style.left),innerWidth-node.getBoundingClientRect().width-4))+'px';
-  const bottom = node.getBoundingClientRect().bottom;
-  if (bottom > limit) node.style.top = Math.max(4, node.offsetTop - (bottom - limit)) + 'px';
+  popup = { node, anchor, options };
+  positionPopup();
   const query = node.querySelector('input');
   if (query) {
     query.addEventListener('input', () => showRows(query.value.toLowerCase().trim()));
-    query.focus();
-  } else list.querySelector('button')?.focus();
+    if(options.autofocus!==false)query.focus({preventScroll:true});
+  } else list.querySelector('button')?.focus({preventScroll:true});
 }
 
 function runAction(name, value, event) {
@@ -6319,11 +6327,9 @@ function spreadsheetImport(mode) {
           topology: type !== 'AA' && mode !== 'oligo' && row[topology]?.trim().toLowerCase() === 'circular' ? 'circular' : 'linear',
           features: [], description: '', ...(mode === 'oligo' ? { subtype: 'oligo' } : {}) });
       });
-      db.docs.push(...records);
-      Object.assign(ui, { project, folder, module: 'projects', group: 'docs', query: '', filter: '', projectRoot: false });
-      save();
-      openDoc(records[0].id);
-    }, 'Import', '');
+      SequenceIO.review(records,{location:project+'|'+folder});
+      return false;
+    }, 'Revisar importación', '');
 }
 
 function compactIcon(glyph, action, label) {
@@ -6693,7 +6699,7 @@ const fly = (event, options, config) => flyout(actionAnchor(event), options, con
 const primerCreateChoices = () => [...primerStrands.map(([value, label]) => [label, 'primer-manual', value]), ['Wizard', 'primer-design']];
 const referenceActions = {
   'global-create': (_, event) => popup?.anchor === actionAnchor(event) ? closePopup() :
-    fly(event, createGroups, { global: true, search: true }),
+    fly(event, createGroups, { global: true, search: true, autofocus:false }),
   'local-create': (_, event) => fly(event, [['Folder', 'new-folder'], ...createGroups]),
   'workspace-profile': (_, event) => fly(event, [['Apariencia', 'appearance'], molecularSettingsMenu, ['Backup and settings', 'settings']]),
   'workspace-tools': (_, event) => fly(event, [['Mi cuenta y sincronización', 'cloud-login'], ['Inventory', 'module', 'inventory'], ['Trash', 'module', 'trash'],
@@ -10492,13 +10498,14 @@ function sequenceContext(event) {
     flyout(cut, [['Show enzyme', 'show-enzyme', cut.dataset.value]], { point: { x: event.clientX, y: event.clientY } });
     return;
   }
-  const feature = event.preserveSelection?null:target.closest?.('[data-action="select-feature"]');
+  const candidate=target.closest?.('[data-action="select-feature"]');
+  const feature=candidate&&(!event.preserveSelection||JSON.stringify(active().features[Number(candidate.dataset.value)]?.ranges)===JSON.stringify(ui.selection?.ranges))?candidate:null;
   if(!event.preserveSelection&&target.closest?.('[data-action="select-codon"]')){const value=target.closest('[data-action="select-codon"]').dataset.value;CodonSelection.select(value);}
   const mapSvg=target.closest?.('svg[data-sequence-map]');
   const hit = hitSurface(target, event.clientX, event.clientY) || (mapSvg?{svg:mapSvg,surface:mapSvg.dataset.sequenceMap,boundary:null}:null);
   if (!hit && !feature) return;
   event.preventDefault();
-  if (feature&&!target.closest?.('[data-action="select-codon"]')) selectAnnotation(feature.dataset.value);
+  if (feature&&!event.preserveSelection&&!target.closest?.('[data-action="select-codon"]')) selectAnnotation(feature.dataset.value);
   else if (!event.preserveSelection&&Number.isFinite(hit?.boundary)&&!ui.selection?.ranges.some(([a, b]) => hit.boundary >= a - 1 && hit.boundary <= b)) {
     setCaret(hit.boundary, hit.surface, Boolean(hit.svg));
   }
@@ -10511,10 +10518,15 @@ function sequenceContext(event) {
       [['Sequence information', 'sequence-info']];
   } else {
     const attached = feature && doc.features[Number(feature.dataset.value)]?.primer;
-    rows = [...(attached ? [ ...(docOf(attached.oligo) ? [['Open oligo', 'open', attached.oligo]] : []),
+    const translation=feature&&doc.features[Number(feature.dataset.value)]?.kind==='CDS';
+    rows = [...(translation?[
+      ['Copy AAs for this translation region','translation-copy-aa',feature.dataset.value],
+      ['Copy bases for this translation region','translation-copy-bases',feature.dataset.value],
+      ...(Team.creatable()?[['Create AA sequence from this translation…','translation-new-aa',feature.dataset.value]]:[]),
+    ]:[]),...(attached ? [ ...(docOf(attached.oligo) ? [['Open oligo', 'open', attached.oligo]] : []),
       ...(editor ? [['Detach primer', 'primer-detach', feature.dataset.value]] : [])] : []),
-      ...(feature && !attached && editor ? [['Edit annotation', 'feature', feature.dataset.value],
-      ['Delete annotation', 'remove-feature', feature.dataset.value]] : []),
+      ...(feature && !attached && editor ? [[translation?'Edit translation':'Edit annotation', 'feature', feature.dataset.value],
+      [translation?'Delete this translation region':'Delete annotation', 'remove-feature', feature.dataset.value]] : []),
       ...(feature && !attached && Team.writable() ? [['Add to Feature Library', 'feature-to-library', feature.dataset.value]] : []),
       ['Copy', 'sequence-copy'], ['Copy special…', 'sequence-copy-special'],
       ...(editor ? [['Change case…', [['Uppercase', 'sequence-case', 'upper'], ['Lowercase', 'sequence-case', 'lower']]],
@@ -10523,7 +10535,7 @@ function sequenceContext(event) {
       ...(doc.type === 'DNA' && editor ? [['Create primer…', primerCreateChoices()],
         ...(primerWorkspace(doc).chosen.length === 2 ? [['Link Primers', 'primer-link']] : [])] : []),
       ...(Team.writable() && doc.type !== 'AA' ? [['Create new part', 'sequence-from-selection', 'part'], ['Create DNA sequence', 'sequence-from-selection', 'DNA'],
-        ['Create RNA sequence', 'sequence-from-selection', 'RNA'], ['Create AA sequence…', 'sequence-from-selection', 'AA']] : []),
+        ['Create RNA sequence', 'sequence-from-selection', 'RNA'], ...(!translation?[['Create AA sequence…', 'sequence-from-selection', 'AA']]:[])] : []),
       ...(doc.type !== 'AA' && editor ? [['Create translation…', 'translation-create']] : []),
       ['Submit to NCBI BLAST', 'blast']];
   }
@@ -10783,7 +10795,7 @@ const Team = (() => {
     'new-sequence', 'import', 'remote-import', 'spreadsheet-import', 'import-trace', 'asset-add', 'team-import-link', 'copy-to', 'duplicate-doc',
     'assembly', 'align', 'align-multiple', 'save-consensus', 'pcr-product', 'new-entity', 'register-schema', 'model-new', 'model-result',
     'pdb-open', 'model-export', 'save-guide', 'crispr-save', 'sequence-from-selection', 'digest-create-fragment', 'primer-copy-product',
-    'circuit-new', 'circuit-import', 'circuit-to-sequence', 'circuit-duplicate']);
+    'circuit-new', 'circuit-import', 'circuit-to-sequence', 'circuit-duplicate','translation-new-aa']);
 
   function actionAllowed(action) {
     if (!enabled || !space) return true;
@@ -12088,13 +12100,14 @@ const notebookGridActions={
 const DeviceLayout=(()=>{
   const key='mesa-device-layout';let preference='auto';try{preference=localStorage.getItem(key)||'auto';}catch{}
   const mobile=()=>preference==='mobile'||preference==='auto'&&(innerWidth<=900||matchMedia('(pointer:coarse)').matches);
-  function apply(){const root=document.documentElement;root.dataset.layout=mobile()?'mobile':'desktop';root.dataset.layoutPreference=preference;root.dataset.orientation=innerWidth>innerHeight?'landscape':'portrait';root.dataset.forcedDesktop=String(preference==='desktop'&&innerWidth<900);root.style?.setProperty('--app-viewport-height',(globalThis.visualViewport?.height||innerHeight)+'px');const select=document.querySelector('[name="device-layout"]');if(select)select.value=preference;}
+  let layoutWidth=innerWidth,orientation=innerWidth>innerHeight?'landscape':'portrait';
+  function apply(){const root=document.documentElement,typing=document.activeElement?.matches?.('input,textarea,[contenteditable="true"]');if(innerWidth!==layoutWidth||!typing){orientation=innerWidth>innerHeight?'landscape':'portrait';layoutWidth=innerWidth;}root.dataset.layout=mobile()?'mobile':'desktop';root.dataset.layoutPreference=preference;root.dataset.orientation=orientation;root.dataset.forcedDesktop=String(preference==='desktop'&&innerWidth<900);root.style?.setProperty('--app-viewport-height',(globalThis.visualViewport?.height||innerHeight)+'px');const select=document.querySelector('[name="device-layout"]');if(select)select.value=preference;}
   function set(value){if(!['auto','mobile','desktop'].includes(value))return;preference=value;try{localStorage.setItem(key,value);}catch{}apply();renderEditor();}
   function settings(){return '<section class="device-settings"><h3>Versión de la interfaz</h3>'+field('Dispositivo',select('device-layout',[['auto','Automático · según el dispositivo'],['mobile','Versión móvil'],['desktop','Versión de ordenador']],preference))+'<p class="muted small">En vertical puedes alternar secuencia y mapa; el mapa conserva debajo una secuencia desplegable. En horizontal se muestran ambas vistas.</p>'+btn(CloudSync.label()?'Mi cuenta y sincronización':'Iniciar sesión y sincronizar','cloud-login')+'<details class="block-gap"><summary>Otras formas de sincronizar</summary>'+btn('Repositorio privado de GitHub','github-connect')+'</details></section>';}
   document.addEventListener('change',e=>{if(e.target.name==='device-layout')set(e.target.value);});
   let frame=0;
-  function viewportChanged(){resetTouchGestures();apply();closePopup();if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{frame=0;apply();if(byId('bases'))renderBases();});});}
-  addEventListener('resize',viewportChanged);addEventListener('orientationchange',viewportChanged);globalThis.screen?.orientation?.addEventListener?.('change',viewportChanged);globalThis.visualViewport?.addEventListener?.('resize',apply);apply();
+  function viewportChanged(event){const changedWidth=innerWidth!==layoutWidth,rotated=event?.type==='orientationchange'||event?.type==='change';apply();if(!changedWidth&&!rotated){if(typeof positionPopup==='function')positionPopup();return;}resetTouchGestures();closePopup();if(frame)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{frame=0;apply();if(byId('bases'))renderBases();});});}
+  addEventListener('resize',viewportChanged);addEventListener('orientationchange',viewportChanged);globalThis.screen?.orientation?.addEventListener?.('change',viewportChanged);globalThis.visualViewport?.addEventListener?.('resize',()=>{apply();if(typeof positionPopup==='function')positionPopup();});apply();
   return{mobile,apply,set,settings};
 })();
 function deviceSequenceTools(doc){return '<div class="device-sequence-tools" aria-label="Vistas móviles">'+btn('Secuencia','device-sequence','aria-pressed="'+(ui.mobileView!=='map')+'"')+btn(doc.topology==='circular'?'Mapa circular':'Mapa lineal','device-map',attr(doc.topology==='circular'?'map':'linear','aria-pressed="'+(ui.mobileView==='map')+'"'))+(doc.topology==='circular'?btn('Lineal','device-map',attr('linear')):'')+'</div>';}
@@ -12128,7 +12141,7 @@ document.addEventListener('pointerdown',event=>{
   const hit=hitSurface(event.target,event.clientX,event.clientY);if(!hit)return;
   const base=touchBase(event.target,hit),inside=ui.selection?.ranges.some(([a,b])=>base>=a&&base<=b);
   const resize=inside&&event.target.closest('[data-base]')?null:resizeHandle(hit,event),feature=event.target.closest('[data-action="select-feature"]'),codon=event.target.closest('[data-action="select-codon"]');
-  touchHold={id:event.pointerId,x:event.clientX,y:event.clientY,lastY:event.clientY,target:event.target,hit,base,active:false,moved:false,preserve:Boolean(inside),timer:setTimeout(()=>{
+  touchHold={id:event.pointerId,x:event.clientX,y:event.clientY,lastY:event.clientY,target:event.target,featureIndex:feature?.dataset.value,hit,base,active:false,moved:false,preserve:Boolean(inside),timer:setTimeout(()=>{
     if(!touchHold||touchHold.id!==event.pointerId)return;touchHold.active=true;
     if(inside&&!resize)return;
     if(codon){CodonSelection.select(codon.dataset.value);return;}
@@ -12139,8 +12152,9 @@ document.addEventListener('pointerdown',event=>{
   },resize?0:650)};
   const held=touchHold;
   held.menuTimer=setTimeout(()=>{if(touchHold!==held||held.moved||touchPointers.size!==1||resize)return;if(drag){if(dragFrame){cancelAnimationFrame(dragFrame);dragFrame=0;}drag=null;}held.menuOpened=true;suppressTouchClickUntil=Date.now()+1800;
-    sequenceContext({target:held.target.isConnected!==false?held.target:held.hit.svg?byId('map-pane')?.querySelector('svg[data-sequence-map]'):byId('bases'),clientX:held.x,clientY:held.y,preserveSelection:true,preventDefault(){}});
-  },1200);
+    const currentFeature=held.featureIndex!==undefined?document.querySelector('[data-action="select-feature"][data-value="'+held.featureIndex+'"]'):null;
+    sequenceContext({target:held.target.isConnected!==false?held.target:currentFeature||(held.hit.svg?byId('map-pane')?.querySelector('svg[data-sequence-map]'):byId('bases')),clientX:held.x,clientY:held.y,preserveSelection:true,preventDefault(){}});
+  },800);
 },{capture:true,passive:false});
 document.addEventListener('pointermove',event=>{
   if(!touchPointers.has(event.pointerId))return;const old=touchPointers.get(event.pointerId);touchPointers.set(event.pointerId,{...old,x:event.clientX,y:event.clientY});
@@ -12167,6 +12181,7 @@ document.addEventListener('lostpointercapture',event=>{if(touchPointers.has(even
 addEventListener('blur',resetTouchGestures);document.addEventListener('visibilitychange',()=>{if(document.hidden)resetTouchGestures();});
 document.addEventListener('click',event=>{if(Date.now()<suppressTouchClickUntil&&event.target.closest?.('#bases,svg[data-sequence-map]')){event.preventDefault();event.stopImmediatePropagation();}},true);
 document.addEventListener('contextmenu',event=>{if(Date.now()-lastTouchAt<1800&&event.target.closest?.('#bases,svg[data-sequence-map]')){event.preventDefault();event.stopImmediatePropagation();}},true);
+document.addEventListener('selectstart',event=>{if(event.target.closest?.('#bases,svg[data-sequence-map]'))event.preventDefault();},true);
 
 const NotebookDictation=(()=>{
   let recognition=null,entryId='',finals=new Set(),pending='';
@@ -12429,6 +12444,22 @@ const CrisprUI=(()=>{
 const crisprActions={crispr:()=>CrisprUI.open(),'download-crispr':()=>CrisprUI.exportTSV(),'crispr-select':value=>CrisprUI.selectHit(value),'crispr-save':value=>CrisprUI.saveHit(value),'crispr-sort':()=>CrisprUI.sort()};
 
 const SequenceIO=(()=>{
+  function configure(record,topology){
+    const copy=structuredClone(record);delete copy.omitted;
+    if(!['linear','circular'].includes(topology))throw Error('Elige topología lineal o circular.');
+    if(topology==='circular'&&(copy.type==='AA'||copy.subtype==='oligo'))throw Error('Las proteínas y los oligos se importan como lineales.');
+    copy.topology=topology;if(topology==='circular')delete copy.startIndex;return copy;
+  }
+  function review(records,{prepare=async()=>{},kicker='Importación',location=''}={}){
+    if(!records.length||records.length>200)throw Error('Importa entre 1 y 200 secuencias.');
+    const omitted=records.reduce((n,d)=>n+(d.omitted||0),0);
+    show('Revisar importación',(location?field('Project folder *',select('location',destinations(),location)):destinationField())+records.map((d,i)=>'<article class="import-record"><b>'+esc(d.name)+'</b><p>'+d.type+' · '+format(d.bases.length)+' posiciones · '+d.features.length+' anotaciones</p><p class="muted small">'+esc(d.description||'')+'</p>'+field('Topología de '+d.name,select('import-topology-'+i,d.type==='AA'||d.subtype==='oligo'?[['linear','Lineal']]:[['linear','Lineal'],['circular','Circular']],d.type==='AA'||d.subtype==='oligo'?'linear':d.topology||'linear'))+'</article>').join('')+'<p class="muted small">Puedes elegir la topología de cada secuencia. El valor inicial procede del archivo o proveedor; FASTA y texto sin topología parten de lineal. Las anotaciones, sus coordenadas y los metadatos originales se conservan.</p>'+(omitted?'<p class="callout">'+omitted+' anotación(es) con ubicaciones no representables quedan en los metadatos originales, sin dibujar.</p>':''),async data=>{
+      const[project,folder]=textOf(data,'location').split('|');
+      const docs=records.map((d,i)=>newDoc('sequence',{...configure(d,textOf(data,'import-topology-'+i)),project,folder}));
+      for(const doc of docs)await prepare(doc);
+      db.docs.push(...docs);save();openDoc(docs[0].id);if(!storageIssue)toast(docs.length+' secuencia(s) importada(s).');
+    },'Importar '+records.length+' secuencia(s)',kicker);
+  }
   const xml=value=>String(value??'').replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[c]));
   const quote=value=>'"'+String(value??'').replaceAll('"','""')+'"';
   function csv(records){return [['name','type','topology','length','sequence','description','annotations_json','metadata_json'],...records.map(d=>[d.name,d.type,d.topology,d.bases.length,Regions.withCase(d.bases,d.lowercase),d.description,JSON.stringify(d.features),JSON.stringify(d.metadata||{})])].map(row=>row.map(quote).join(',')).join('\r\n');}
@@ -12445,7 +12476,7 @@ const SequenceIO=(()=>{
     const {id,project,folder,history,deleted,updated,kind,...record}=d;return record;
   }
   function metadataMarkup(d){const m=d.metadata;if(!m)return '<p class="muted small">Sin metadatos de importación.</p>';const rows=Object.entries(m).filter(([k,v])=>!['rawHeader','sourceFeatures','unparsedFeatures','rawRecord'].includes(k)&&['string','number','boolean'].includes(typeof v)).map(([k,v])=>'<tr><th>'+esc(k)+'</th><td>'+esc(v)+'</td></tr>');return '<h3>Origen y metadatos</h3><table><tbody>'+rows.join('')+'</tbody></table>'+(m.sourceFeatures?.length?'<details><summary>Información de origen</summary><pre class="metadata-raw">'+esc(m.sourceFeatures.flatMap(f=>f.qualifiers).join('\n'))+'</pre></details>':'')+(m.unparsedFeatures?.length?'<p class="callout">'+m.unparsedFeatures.length+' anotaciones con ubicaciones no representables se conservan como datos originales; no se dibujan en el mapa.</p>':'')+'<details><summary>Metadatos completos</summary><pre class="metadata-raw">'+esc(JSON.stringify(m,null,2))+'</pre></details>';}
-  return{csv,sbol,json,readJSON,metadataMarkup};
+  return{csv,sbol,json,readJSON,metadataMarkup,configure,review};
 })();
 
 const RemoteSequences=(()=>{
@@ -12470,8 +12501,7 @@ const RemoteSequences=(()=>{
     else if(provider==='pdb'){if(!/^[A-Za-z0-9]{4}$/.test(id))throw Error('Introduce el identificador PDB de cuatro caracteres.');const accession=id.toUpperCase(),base='https://data.rcsb.org/rest/v1/core/',entry=await request(base+'entry/'+accession,true),entities=entry.rcsb_entry_container_identifiers?.polymer_entity_ids||[];if(!entities.length||entities.length>40)throw Error('La estructura no tiene entidades poliméricas o supera 40.');for(const entity of entities){const d=pdb(entry,await request(base+'polymer_entity/'+accession+'/'+entity,true),accession);d.metadata={...d.metadata,provider:'RCSB PDB',sourceURL:'https://www.rcsb.org/structure/'+accession,retrievedAt:new Date().toISOString()};docs.push(d);}}
     else throw Error('Proveedor no válido.');if(!docs.length)throw Error('No se encontró una secuencia completa.');return docs;
   }
-  let preview=[];
-  function open(){show('Importar desde una base de datos',field('Proveedor',select('remote-provider',[['nuccore','NCBI Nucleotide · GenBank'],['protein','NCBI Protein · GenPept'],['uniprot','UniProtKB · proteínas'],['pdb','RCSB PDB · secuencias de las entidades']]))+field('Accession / identificador',input('remote-id','','required maxlength="40" placeholder="Ej. J01749.1, P01308 o 1CRN"'))+'<p class="muted small">Se consulta el identificador al proveedor oficial. Se conservan anotaciones, campos de origen y el registro de metadatos recibido. PDB importa la secuencia canónica de cada entidad, incluidas posiciones no resueltas en la estructura.</p>',async data=>{preview=await load(textOf(data,'remote-provider'),textOf(data,'remote-id'));show('Revisar importación',preview.map(d=>'<article class="import-record"><b>'+esc(d.name)+'</b><p>'+d.type+' · '+format(d.bases.length)+' posiciones · '+d.features.length+' anotaciones</p><p class="muted small">'+esc(d.description)+'</p></article>').join('')+'<p class="muted small">Los metadatos originales quedan disponibles en Metadata. JSON conserva todos los campos; FASTA solo representa nombres y bases.</p>',()=>{const docs=preview.map(({omitted,...d})=>newDoc('sequence',d));db.docs.push(...docs);save();openDoc(docs[0].id);preview=[];},'Importar '+preview.length+' secuencia(s)','Bases de datos');return false;},'Consultar','Importación');}
+  function open(){show('Importar desde una base de datos',field('Proveedor',select('remote-provider',[['nuccore','NCBI Nucleotide · GenBank'],['protein','NCBI Protein · GenPept'],['uniprot','UniProtKB · proteínas'],['pdb','RCSB PDB · secuencias de las entidades']]))+field('Accession / identificador',input('remote-id','','required maxlength="40" placeholder="Ej. J01749.1, P01308 o 1CRN"'))+'<p class="muted small">Se consulta el identificador al proveedor oficial. Se conservan anotaciones, campos de origen y el registro de metadatos recibido. PDB importa la secuencia canónica de cada entidad, incluidas posiciones no resueltas en la estructura.</p>',async data=>{const preview=await load(textOf(data,'remote-provider'),textOf(data,'remote-id'));SequenceIO.review(preview,{kicker:'Bases de datos'});return false;},'Consultar','Importación');}
   return{load,uniprot,pdb,open};
 })();
 
@@ -12577,6 +12607,69 @@ const AssemblyUI=(()=>{
   document.addEventListener('change',e=>{if(e.target.name==='assembly-method'||e.target.name?.startsWith('assembly-source-'))refresh();});
   return{open,actions:{assembly:open,'assembly-refresh':refresh,'assembly-add':()=>{const n=byId('assembly-fragments');if(n.children.length>=10)throw Error('El límite es de 10 fragmentos.');n.insertAdjacentHTML('beforeend',slot(n.children.length));refresh();}}};
 })();
+
+const ExplorerContext=(()=>{
+  function enclosing(doc){
+    Object.assign(ui,{module:'projects',dashboard:'',project:doc.project,folder:doc.folder||'',projectRoot:false,group:doc.kind==='template'?'templates':'docs',query:'',filter:''});
+    const shell=byId('shell');shell.classList.remove('expanded-workspace','hide-side');shell.classList.add('show-side');render();
+  }
+  function rename(doc){show('Renombrar archivo',field('Nombre',input('name',doc.name)),data=>{if(!docOf(doc.id))throw Error('El archivo ya no está disponible.');doc.name=nameOf(data);doc.updated=Date.now();save();render();});}
+  function copy(doc){show('Copiar a…',field('Nombre',input('name',doc.name+' copy'))+field('Destino',select('location',destinations(),doc.project+'|'+(doc.folder||''))),data=>{
+    if(!docOf(doc.id))throw Error('El archivo ya no está disponible.');
+    const[project,folder]=textOf(data,'location').split('|'),value=structuredClone(doc);delete value.history;
+    commitDoc(newDoc(doc.kind,{...value,id:uuid(),name:nameOf(data),project,folder:doc.kind==='template'?'':folder,updated:Date.now()}));
+  },'Copiar');}
+  function run(value){
+    const[id,command,format]=value.split('|'),doc=docOf(id);if(!doc)throw Error('El archivo ya no está disponible.');
+    const permission={rename:'move-doc',move:'move-doc',copy:'copy-to',archive:'delete-doc'}[command];if(permission&&!Team.actionAllowed(permission))return;
+    if(command==='open')openDoc(id);
+    else if(command==='folder')enclosing(doc);
+    else if(command==='rename')rename(doc);
+    else if(command==='move')moveDoc(doc);
+    else if(command==='copy')copy(doc);
+    else if(command==='archive')removeDoc(doc);
+    else if(command==='export'&&doc.kind==='sequence'){
+      const formats={gb:()=>Lab.toGenBank(doc),fasta:()=>Lab.toFasta(doc),json:()=>SequenceIO.json(doc)};
+      if(!formats[format])throw Error('Formato no válido.');download(doc.name+'.'+format,formats[format]());
+    }
+  }
+  function rows(doc){const command=(label,action)=>[label,'explorer-command',doc.id+'|'+action];return[
+    command('Abrir carpeta contenedora','folder'),command('Abrir','open'),
+    ...(Team.writable()?[command('Mover a carpeta…','move'),command('Renombrar','rename')]:[]),
+    ...(Team.creatable()&&doc.kind!=='entity'?[command('Copiar a…','copy')]:[]),
+    ...(doc.kind==='sequence'?[['Exportar', ['gb','fasta','json'].map(format=>command({gb:'GenBank',fasta:'FASTA',json:'JSON completo'}[format],'export|'+format))]]:[]),
+    ...(Team.writable()?[command('Archivar en la papelera…','archive')]:[]),
+  ];}
+  document.addEventListener('contextmenu',event=>{
+    if(dialog.open)return;
+    const target=event.target.closest?.('#items [data-action="open"],#expanded-results [data-action="open"],#tabstrip [data-action="open"]');
+    const doc=target&&docOf(target.dataset.value);if(!doc)return;
+    event.preventDefault();flyout(target,rows(doc),{point:{x:event.clientX,y:event.clientY}});
+  });
+  return{run,rows,enclosing};
+})();
+const explorerContextActions={'explorer-command':value=>ExplorerContext.run(value)};
+
+const TranslationContext=(()=>{
+  function record(doc,feature){
+    if(!feature||feature.kind!=='CDS'||doc.type==='AA')throw Error('Selecciona una traducción guardada.');
+    const options=Protein.featureOptions(feature),bases=Protein.featureTranslation(doc,feature);
+    if(!bases.length)throw Error('La región no contiene un codón completo.');
+    return{name:feature.name,type:'AA',topology:'linear',bases,features:[],lowercase:[],sourceIds:[doc.id],
+      description:'Traducción de '+feature.name+' en '+doc.name+'.',metadata:{format:'Derived translation',source:{id:doc.id,name:doc.name,updated:doc.updated,ranges:structuredClone(feature.ranges),...options},sourceMetadata:structuredClone(doc.metadata||{})}};
+  }
+  function create(index){const doc=active(),feature=doc.features[Number(index)],value=record(doc,feature);
+    show('Crear secuencia de aminoácidos',field('Nombre',input('name',feature.name))+destinationField()+'<p class="muted small">'+value.bases.length+' aminoácidos · hebra '+(feature.strand<0?'inversa':'directa')+' · código genético '+value.metadata.source.code+'. Se aplican el marco y las opciones de la traducción.</p>',data=>{
+      if(!Team.creatable())throw Error('Se necesita permiso para crear archivos.');const[project,folder]=textOf(data,'location').split('|');commitDoc(newDoc('sequence',{...value,name:nameOf(data),project,folder}));
+    },'Crear');
+  }
+  async function copy(index,amino){const doc=active(),feature=doc.features[Number(index)];
+    if(amino){const value=record(doc,feature);await copySequence(value.bases,{bases:value.bases,features:[],lowercase:[]},'AA');}
+    else{const value=Regions.fragment(doc,Regions.fromRanges(feature.ranges),{reverseComplement:feature.strand<0});await copySequence(value.bases,value,doc.type);}
+  }
+  return{record,create,copy};
+})();
+const translationContextActions={'translation-copy-aa':index=>TranslationContext.copy(index,true),'translation-copy-bases':index=>TranslationContext.copy(index,false),'translation-new-aa':index=>TranslationContext.create(index)};
 
 const dialog = byId('dialog');
 let onSubmit;
@@ -12779,14 +12872,9 @@ function importDialog() {
       const raw = file.size ? await file.text() : textOf(data, 'raw');
       const records = raw.trim().startsWith('{')?[{...SequenceIO.readJSON(raw),omitted:0}]:Lab.readSequences(raw, textOf(data, 'name') || file.name.replace(/\.[^.]+$/, ''), textOf(data, 'type'));
       if (records.length > 200) throw Error('Importa hasta 200 registros por operación.');
-      const omitted = records.reduce((total, record) => total + record.omitted, 0);
-      const docs = records.map(({ omitted: _, ...record }) => newDoc('sequence', record));
-      for(const doc of docs)await classifyNewSequence(doc,data);
-      db.docs.push(...docs);
-      save();
-      openDoc(docs[0].id);
-      if (!storageIssue) toast(records.length + ' secuencia(s) importada(s).' + (omitted ? ' ' + omitted + ' anotación(es) con ubicaciones no compatibles se conservaron en metadatos, sin dibujar.' : ''));
-    }, 'Importar', 'Biología molecular');
+      SequenceIO.review(records,{prepare:doc=>classifyNewSequence(doc,data)});
+      return false;
+    }, 'Revisar importación', 'Biología molecular');
 }
 
 function exportDialog() {
@@ -12997,8 +13085,7 @@ function folderTrail(folder) {
   return names.join(' / ');
 }
 
-function moveDoc() {
-  const doc = active();
+function moveDoc(doc = active()) {
   const projectOptions = db.projects.map(project => [project.id + '|', project.name]);
   const folderOptions = db.folders.map(folder => [
     folder.project + '|' + folder.id, projectOf(folder.project).name + ' / ' + folderTrail(folder),
@@ -13034,8 +13121,7 @@ function closeTab(id) {
   render();
 }
 
-function removeDoc() {
-  const doc = active();
+function removeDoc(doc = active()) {
   show('Mover a la papelera', '<p>Se retirará «' + esc(doc.name) + '» del proyecto. Podrás recuperarlo desde la papelera.</p>',
     () => {
       db.docs = db.docs.filter(item => item !== doc);
@@ -13264,7 +13350,7 @@ const actions = {
   'register-schema': value => entityDialog(schemaOf(value)),
   'edit-entity': () => entityDialog(schemaOf(active().schema), active()),
   'manage-doc': manageDoc,
-  'move-doc': moveDoc,
+  'move-doc': () => moveDoc(),
   'duplicate-doc': () => {
     const copy = structuredClone(active());
     delete copy.history;
@@ -13275,7 +13361,7 @@ const actions = {
     commitDoc(newDoc(copy.kind, { ...copy, id: uuid(), name: copy.name + ' · copia', updated: Date.now() }));
     dialog.close();
   },
-  'delete-doc': removeDoc,
+  'delete-doc': () => removeDoc(),
   'download-note': () => { download(active().name + '.txt', active().content); dialog.close(); },
   settings,
   backup: () => download('mesa-molecular-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(db, null, 2), 'application/json'),
@@ -13361,7 +13447,7 @@ document.addEventListener('focusin', event => {
 });
 Object.assign(actions, advancedActions, referenceActions, featureActions, sequenceActions, mapToolActions, mapExportActions,
   molecularSettingActions, digestActions, primerEditorActions, primerPanelActions, circuitActions, themeActions, annotationActions, annotationGridActions,
-  { appearance: () => show('Apariencia', Theme.settings(), null, '', 'Mesa Molecular') }, Team.actions,codonActions,copyPanelActions,crisprActions,sequenceIOActions,AlignmentUI.actions,AssemblyUI.actions);
+  { appearance: () => show('Apariencia', Theme.settings(), null, '', 'Mesa Molecular') }, Team.actions,codonActions,copyPanelActions,crisprActions,sequenceIOActions,AlignmentUI.actions,AssemblyUI.actions,explorerContextActions,translationContextActions);
 Workspace.start();
 
 </script>
